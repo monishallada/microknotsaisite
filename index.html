@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Microknots — Full‑Stack AI</title>
+  <meta name="description" content="Microknots builds trainable, adaptive AI systems: finance, data, trading, and marketing in one ecosystem." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b10;          /* near‑black */
+      --panel:#0f1016;       /* card surface */
+      --text:#e8e8ef;        /* primary text */
+      --muted:#a6a8b7;       /* secondary text */
+      --line:#1b1c28;        /* hairlines */
+      --accent1:#7a5cff;     /* indigo */
+      --accent2:#00d1ff;     /* cyan */
+      --accent3:#b85cff;     /* purple */
+      --glow: 0 0 32px rgba(122,92,255,.35), 0 0 64px rgba(0,209,255,.15);
+      --radius: 16px;
+      --radius-lg: 28px;
+      --shadow: 0 10px 35px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:radial-gradient(1200px 600px at 10% -10%, #141523 0%, rgba(20,21,35,0) 60%),
+                radial-gradient(900px 600px at 100% 10%, #101322 0%, rgba(16,19,34,0) 55%), var(--bg);
+      color:var(--text); font: 400 16px/1.6 "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      letter-spacing:.1px;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1120px, 92vw);margin:0 auto}
+    .gradient-text{background:linear-gradient(90deg,var(--accent1),var(--accent2) 45%,var(--accent3)); -webkit-background-clip:text; background-clip:text; color:transparent}
+    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border:1px solid #242538;border-radius:999px;font-size:.85rem;color:var(--muted);backdrop-filter:blur(4px);background:rgba(255,255,255,.02)}
+
+    /* NAV */
+    .nav{position:sticky;top:0;z-index:50;backdrop-filter: blur(10px); background:rgba(8,8,12,.35); border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
+    .brand{display:flex;align-items:center;gap:.75rem}
+    .brand img{width:36px;height:36px;border-radius:10px;box-shadow:var(--glow)}
+    .brand-title{font-family:"Space Grotesk";font-weight:700;letter-spacing:.2px}
+    .nav-links{display:flex;gap:1.2rem}
+    .nav-links a{color:var(--muted)}
+    .cta{padding:.7rem 1rem;border-radius:12px;border:1px solid #2a2b3d;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); box-shadow:var(--shadow)}
+    .cta:hover{transform:translateY(-1px)}
+
+    /* HERO */
+    .hero{position:relative;padding:72px 0 48px}
+    .hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center}
+    h1{font:800 46px/1.06 "Space Grotesk", "Inter", sans-serif; letter-spacing:-.5px; margin:0 0 16px}
+    .lead{font-size:1.125rem;color:#cfd1dd;max-width:58ch}
+    .hero-ctas{display:flex;gap:.8rem;margin-top:22px}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.1rem;border-radius:14px;border:1px solid #2a2b3d;background:#141523;box-shadow:var(--shadow);font-weight:600}
+    .btn.primary{background:linear-gradient(135deg, rgba(122,92,255,.18), rgba(0,209,255,.18)); border-color:#3b2e6e}
+    .btn .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,var(--accent1),var(--accent2))}
+
+    /* Feature grid */
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}
+    .card{padding:20px;border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid #1f2030; box-shadow:var(--shadow)}
+    .card h3{margin:0 0 8px;font:700 18px/1.2 "Inter"}
+    .card p{margin:0;color:var(--muted)}
+
+    /* Section wrapper */
+    section{padding:72px 0;border-top:1px solid var(--line)}
+    section h2{font:800 34px/1.1 "Space Grotesk"; margin:0 0 14px}
+    .sub{color:var(--muted);max-width:72ch}
+
+    /* List */
+    .list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+    .li{display:flex;gap:.8rem;align-items:flex-start;padding:14px 14px;border:1px solid #1f2030;border-radius:14px;background:rgba(255,255,255,.02)}
+    .li svg{flex:none;opacity:.9}
+
+    /* TABS */
+    .tabs{margin-top:28px;border:1px solid #1e2031;border-radius:var(--radius-lg); overflow:hidden;background:rgba(255,255,255,.02)}
+    .tab-bar{display:flex;overflow:auto;border-bottom:1px solid #1e2031}
+    .tab-bar button{flex:1 0 auto;padding:14px 18px;background:none;border:0;color:var(--muted);font-weight:600;border-right:1px solid #1e2031;cursor:pointer}
+    .tab-bar button.active{color:var(--text);background:linear-gradient(180deg,rgba(122,92,255,.18),rgba(0,209,255,.12))}
+    .tab{display:none;padding:24px}
+    .tab.active{display:block}
+    .tab .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.8rem;padding:.25rem .5rem;border:1px solid #2a2b3d;border-radius:8px;background:#0f111a;color:#d0d3e2}
+
+    /* Diagram */
+    .diagram{margin-top:22px;border-radius:var(--radius-lg);background:radial-gradient(240px 160px at 10% 20%, rgba(122,92,255,.15), rgba(0,0,0,0)), radial-gradient(240px 160px at 90% 60%, rgba(0,209,255,.12), rgba(0,0,0,0)), #0f1118; border:1px solid #1f2131; box-shadow:var(--shadow); padding:20px}
+    .diagram svg{width:100%;height:auto;display:block}
+
+    /* Footer */
+    footer{padding:54px 0;color:var(--muted)}
+    .foot-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+
+    /* Reveal on scroll */
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease, transform .7s ease}
+    .reveal.visible{opacity:1;transform:none}
+
+    /* Responsive */
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr}
+      .cards{grid-template-columns:1fr}
+      .list{grid-template-columns:1fr}
+      .tab .two-col{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <img alt="Microknots logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYn" onerror="this.src='';" />
+        <strong class="brand-title">microknots</strong>
+      </div>
+      <nav class="nav-links">
+        <a href="#who">Who we are</a>
+        <a href="#different">Differentiators</a>
+        <a href="#products">Products</a>
+        <a href="#superapp">Super App</a>
+        <a href="#better">Why us</a>
+      </nav>
+      <a class="cta" href="#contact">Contact</a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <header class="hero container">
+    <div class="hero-grid">
+      <div>
+        <span class="pill">Full‑stack AI Platform</span>
+        <h1><span class="gradient-text">Trainable, adaptive AI</span> that you can own and scale.</h1>
+        <p class="lead">Microknots builds end‑to‑end systems—models, data, infrastructure—so businesses operate with sub‑second intelligence across finance, trading, data, and marketing.</p>
+        <div class="hero-ctas">
+          <a class="btn primary" href="#products"><span class="dot"></span> Explore Products</a>
+          <a class="btn" href="#contact">Talk to us</a>
+        </div>
+        <div class="cards">
+          <div class="card"><h3>Cloud‑native GPUs</h3><p>Enterprise clusters engineered for low‑latency inference and training.</p></div>
+          <div class="card"><h3>Own your IP</h3><p>Models, weights, and data flows remain yours. No vendor lock‑in.</p></div>
+          <div class="card"><h3>Continuous learning</h3><p>Feedback loops improve performance across every module.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="diagram" aria-hidden="true">
+          <!-- Neon system map (inline SVG) -->
+          <svg viewBox="0 0 800 560" role="img" aria-label="Microknots system diagram">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop stop-color="#7a5cff"/>
+                <stop offset="1" stop-color="#00d1ff"/>
+              </linearGradient>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <rect x="20" y="20" width="760" height="520" rx="24" fill="#0c0f18" stroke="#1f2131"/>
+            <!-- core -->
+            <circle cx="400" cy="280" r="68" fill="#111426" stroke="#2a2d42"/>
+            <text x="400" y="266" text-anchor="middle" fill="#cfd1dd" font-family="Inter" font-weight="700">LLM +</text>
+            <text x="400" y="292" text-anchor="middle" fill="#cfd1dd" font-family="Inter" font-weight="700">Vector Core</text>
+            <text x="400" y="318" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">shared across modules</text>
+            <!-- nodes -->
+            <g filter="url(#glow)">
+              <path d="M400 128 L400 212" stroke="url(#g1)" stroke-width="2"/>
+              <path d="M400 348 L400 432" stroke="url(#g1)" stroke-width="2"/>
+              <path d="M254 280 L332 280" stroke="url(#g1)" stroke-width="2"/>
+              <path d="M546 280 L468 280" stroke="url(#g1)" stroke-width="2"/>
+            </g>
+            <!-- top -->
+            <rect x="340" y="60" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
+            <text x="400" y="89" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Finance</text>
+            <text x="400" y="105" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">Aurelo</text>
+            <!-- bottom -->
+            <rect x="340" y="452" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
+            <text x="400" y="481" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Marketing</text>
+            <text x="400" y="497" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">Suite</text>
+            <!-- left -->
+            <rect x="148" y="256" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
+            <text x="208" y="285" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Data Packets</text>
+            <!-- right -->
+            <rect x="532" y="256" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
+            <text x="592" y="285" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Trading Bots</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Who We Are -->
+  <section id="who">
+    <div class="container reveal">
+      <h2>Who We Are</h2>
+      <p class="sub">A full‑stack AI company operating at the intersection of <strong>finance</strong>, <strong>data</strong>, <strong>trading</strong>, and <strong>marketing</strong>.</p>
+      <div class="list">
+        <div class="li">"+
+        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c1' x1='0' x2='1'><stop stop-color='"+"#7a5cff"+"'/><stop offset='1' stop-color='"+"#00d1ff"+"'/></linearGradient></defs></svg>"+
+        "<div><strong>Full‑stack approach.</strong> We build models, pipelines, and infrastructure—not just wrappers.</div>"+
+        "</div>"+
+        "<div class=\"li\">"+
+        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg>"+
+        "<div><strong>Mission‑driven.</strong> Trainable, adaptive AI that organizations can own and scale.</div>"+
+        "</div>"+
+        "<div class=\"li\">"+
+        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg>"+
+        "<div><strong>No lock‑in.</strong> Clients own their models, weights, and data flows.</div>"+
+        "</div>"+
+      "</div>"+
+      "</div>"+
+    "</div>"
+  +
+  "</section>\n\n  <!-- What Makes Us Different -->\n  <section id=\"different\">\n    <div class=\"container reveal\">\n      <h2>What Makes Us Different</h2>\n      <p class=\"sub\">Beyond APIs: we restructure LLMs and data backends for each sector.</p>\n      <div class=\"list\">\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d1' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Custom data pipelines → vector DBs, embeddings, tokenization <em>per industry</em>.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Fine‑tuning: LoRA/QLoRA, attention re‑weighting, pruning → smaller, faster, smarter.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Cloud‑native GPU clusters engineered for enterprise‑scale, low‑latency performance.</div></div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Products (Tabs) -->\n  <section id=\"products\">\n    <div class=\"container reveal\">\n      <h2>Our Core Products</h2>\n      <p class=\"sub\">Four modules, one brain. Switch tabs to explore.</p>\n      <div class=\"tabs\" data-tabs>\n        <div class=\"tab-bar\">\n          <button class=\"active\" data-tab=\"aurelo\">Aurelo Finance</button>\n          <button data-tab=\"packets\">AI Trainable Data Packets</button>\n          <button data-tab=\"trading\">AI Trading Algorithms & Bots</button>\n          <button data-tab=\"marketing\">AI Marketing Suite</button>\n        </div>\n        <div class=\"tab active\" id=\"tab-aurelo\">\n          <div class=\"two-col\">\n            <div>\n              <h3>Aurelo Finance — AI Wealth & Trading Platform</h3>\n              <ul>\n                <li>Real‑time dashboards for net worth, allocation, and portfolio health.</li>\n                <li>Bots powered by SMA/EMA crossovers, Bollinger triggers, pivot runs, reinforcement learning.</li>\n                <li><strong>Jasper Engine:</strong> tiered models for options, hedging, and hybrid strategies.</li>\n                <li><em>Differentiator:</em> AI‑first execution, not just analytics.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Try a quick flow</h3><p>Export allocations → feed to <span class=\"kbd\">/optimize</span> → produce hedging plan in seconds.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Latency</h3><p>Sub‑second trade signals on GPU clusters.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-packets\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Trainable Data Packets</h3>\n              <ul>\n                <li>Convert messy raw data → LLM‑ready <strong>JSONL/CSV</strong> packets with embeddings + labels.</li>\n                <li>Industry‑agnostic: retail, healthcare, finance, and more.</li>\n                <li>Plug‑and‑play fine‑tuning: hours, not months.</li>\n                <li><em>Differentiator:</em> domain‑specific, structured for real AI learning—not generic corpora.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Pipeline</h3><p>Ingest → Clean → Normalize → Vectorize → Label → Package → Deliver.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Formats</h3><p><span class=\"kbd\">.jsonl</span> · <span class=\"kbd\">.csv</span> · <span class=\"kbd\">FAISS</span>/<span class=\"kbd\">HNSW</span> indices.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-trading\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Trading Algorithms & Bots</h3>\n              <ul>\n                <li>Low‑latency execution with sub‑second reaction.</li>\n                <li><strong>LSTM</strong> + reinforcement learning for adaptive market behavior.</li>\n                <li>Ensemble models combining deep learning with technical indicators.</li>\n                <li><em>Differentiator:</em> self‑optimizing bots that learn and evolve.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Signal Stack</h3><p>SMA/EMA xovers · Bollinger triggers · Pivot‑run · RL policy.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Risk</h3><p>Position sizing + guardrails baked into execution engine.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-marketing\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Marketing Suite</h3>\n              <ul>\n                <li>AI chatbots for brand‑voice sales & support.</li>\n                <li>Auto‑generated posts, ads, and scripts.</li>\n                <li>AI commenters/agents for end‑to‑end engagement loops.</li>\n                <li><em>Differentiator:</em> closed‑loop system (content → engagement → analytics).</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Attribution</h3><p>LLM‑based attribution connects creative to conversions across channels.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Voice</h3><p>Style‑consistent generation with brand embeddings.</p></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Super App -->\n  <section id=\"superapp\">\n    <div class=\"container reveal\">\n      <h2>The Microknots Super App</h2>\n      <p class=\"sub\">All products in one integrated platform powered by a shared AI backend.</p>\n      <div class=\"diagram\">\n        <svg viewBox=\"0 0 920 380\">\n          <defs>\n            <linearGradient id=\"wire\" x1=\"0\" x2=\"1\">\n              <stop stop-color=\"#7a5cff\"/><stop offset=\"1\" stop-color=\"#00d1ff\"/>\n            </linearGradient>\n            <filter id=\"glow2\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"3\"/></filter>\n          </defs>\n          <rect x=\"12\" y=\"12\" width=\"896\" height=\"356\" rx=\"22\" fill=\"#0c0f18\" stroke=\"#1f2131\"/>\n          <g stroke=\"url(#wire)\" stroke-width=\"2\" filter=\"url(#glow2)\">\n            <path d=\"M160 190H760\"/>\n            <path d=\"M460 70V310\"/>\n          </g>\n          <g fill=\"#121528\" stroke=\"#2a2d42\">\n            <rect x=\"420\" y=\"154\" width=\"80\" height=\"52\" rx=\"10\"/>\n            <rect x=\"120\" y=\"154\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"300\" y=\"44\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"300\" y=\"256\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"600\" y=\"44\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"600\" y=\"256\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"760\" y=\"154\" width=\"120\" height=\"52\" rx=\"10\"/>\n          </g>\n          <g font-family=\"Inter\" font-weight=\"700\" fill=\"#dbe0ff\">\n            <text x=\"460\" y=\"185\" text-anchor=\"middle\">Core</text>\n            <text x=\"180\" y=\"185\" text-anchor=\"middle\">Data Packets</text>\n            <text x=\"360\" y=\"75\" text-anchor=\"middle\">Finance</text>\n            <text x=\"360\" y=\"287\" text-anchor=\"middle\">Marketing</text>\n            <text x=\"660\" y=\"75\" text-anchor=\"middle\">Trading</text>\n            <text x=\"660\" y=\"287\" text-anchor=\"middle\">Analytics</text>\n            <text x=\"820\" y=\"185\" text-anchor=\"middle\">APIs</text>\n          </g>\n        </svg>\n      </div>\n      <ul class=\"list\" style=\"margin-top:18px\">\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s1' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Shared AI backend: LLM + vector DB core connects every module.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Cross‑learning ecosystem: trading ↔ marketing ↔ finance ↔ retail.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>One login. One data flow. One AI brain.</div></div>\n      </ul>\n    </div>\n  </section>\n\n  <!-- Why We're Better -->\n  <section id=\"better\">\n    <div class=\"container reveal\">\n      <h2>Why We’re Better</h2>\n      <div class=\"cards\">\n        <div class=\"card\"><h3>Lower Cost</h3><p>No API tolls. Optimized runtimes and right‑sized models.</p></div>\n        <div class=\"card\"><h3>Faster</h3><p>Sub‑second execution at enterprise scale.</p></div>\n        <div class=\"card\"><h3>Smarter</h3><p>Continuous learning from structured data.</p></div>\n      </div>\n      <div class=\"card\" style=\"margin-top:16px\"><h3>Owned</h3><p>Clients keep IP + control—models, weights, and data flows are yours.</p></div>\n    </div>\n  </section>\n\n  <!-- Contact -->\n  <section id=\"contact\">\n    <div class=\"container reveal\">\n      <h2>Let’s Build Your AI</h2>\n      <p class=\"sub\">DM us or email <a href=\"mailto:microknots.careers@gmail.com\">microknots.careers@gmail.com</a>. We’ll reply with a short discovery plan and an architecture draft.</p>\n      <div class=\"hero-ctas\">\n        <a class=\"btn primary\" href=\"mailto:microknots.careers@gmail.com\"><span class=\"dot\"></span> Start a project</a>\n        <a class=\"btn\" href=\"#\">Book a demo</a>\n      </div>\n    </div>\n  </section>\n\n  <footer>\n    <div class=\"container foot-grid\">\n      <div>© <span id=\"year\"></span> Microknots. All rights reserved.</div>\n      <div class=\"pill\">Built with love for performance • Privacy‑first</div>\n    </div>\n  </footer>\n\n  <script>
+    // Replace tiny inline logo preview with full base64 (kept small above for initial paint)
+    (function(){
+      const img=document.querySelector('.brand img');
+      const big="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYn"+
+      "XGNyZW1haW5kZXI="; // placeholder fragment to keep source compact
+      // swap only if we encoded a longer version during build (optional)
+    })();
+
+    // Tabs
+    const tabContainers = document.querySelectorAll('[data-tabs]');
+    tabContainers.forEach(tc=>{
+      const buttons = tc.querySelectorAll('.tab-bar button');
+      const tabs = tc.querySelectorAll('.tab');
+      const activate = key => {
+        buttons.forEach(b=>b.classList.toggle('active', b.dataset.tab===key));
+        tabs.forEach(t=>t.classList.toggle('active', t.id===`tab-${key}`));
+        history.replaceState(null, '', `#${key}`);
+      };
+      buttons.forEach(b=>b.addEventListener('click', ()=>activate(b.dataset.tab)));
+      const hash = location.hash.replace('#','');
+      if(hash){ const match=[...buttons].find(b=>b.dataset.tab===hash); if(match) activate(hash); }
+    });
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
