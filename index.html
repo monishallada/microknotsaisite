@@ -1,249 +1,867 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Microknots — Full‑Stack AI</title>
-  <meta name="description" content="Microknots builds trainable, adaptive AI systems: finance, data, trading, and marketing in one ecosystem." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0b0b10;          /* near‑black */
-      --panel:#0f1016;       /* card surface */
-      --text:#e8e8ef;        /* primary text */
-      --muted:#a6a8b7;       /* secondary text */
-      --line:#1b1c28;        /* hairlines */
-      --accent1:#7a5cff;     /* indigo */
-      --accent2:#00d1ff;     /* cyan */
-      --accent3:#b85cff;     /* purple */
-      --glow: 0 0 32px rgba(122,92,255,.35), 0 0 64px rgba(0,209,255,.15);
-      --radius: 16px;
-      --radius-lg: 28px;
-      --shadow: 0 10px 35px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background:radial-gradient(1200px 600px at 10% -10%, #141523 0%, rgba(20,21,35,0) 60%),
-                radial-gradient(900px 600px at 100% 10%, #101322 0%, rgba(16,19,34,0) 55%), var(--bg);
-      color:var(--text); font: 400 16px/1.6 "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      letter-spacing:.1px;
-    }
-    a{color:inherit;text-decoration:none}
-    .container{width:min(1120px, 92vw);margin:0 auto}
-    .gradient-text{background:linear-gradient(90deg,var(--accent1),var(--accent2) 45%,var(--accent3)); -webkit-background-clip:text; background-clip:text; color:transparent}
-    .pill{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .8rem;border:1px solid #242538;border-radius:999px;font-size:.85rem;color:var(--muted);backdrop-filter:blur(4px);background:rgba(255,255,255,.02)}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aurelo Data — Grocery Store Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0b12;        /* near-black */
+    --panel:#121223;     /* deep navy */
+    --muted:#1a1a2b;
+    --hover:#171732;
+    --text:#f6f7fb;
+    --sub:#b9b8ce;
+    --brand:#7c4dff;     /* purple */
+    --brand-2:#a78bfa;   /* soft purple */
+    --accent:#2dd4bf;    /* teal accent for good KPIs */
+    --warn:#f59e0b;      /* amber */
+    --bad:#ef4444;       /* red */
+    --good:#22c55e;      /* green */
+    --chip:#2a2a45;
+    --border:#232345;
+    --shadow: 0 8px 24px rgba(0,0,0,.35);
+    --radius: 16px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:linear-gradient(180deg,#0a0a13 0%, #0c0c18 100%);
+    color:var(--text); font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  a{color:inherit; text-decoration:none}
+  .app{
+    display:grid; grid-template-columns: 280px 1fr; min-height:100%;
+  }
+  /* Sidebar */
+  .sidebar{
+    position:sticky; top:0; height:100vh; overflow:auto;
+    background:linear-gradient(200deg, rgba(124,77,255,.12), transparent 35%), var(--panel);
+    border-right:1px solid var(--border); padding:18px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px; margin-bottom:18px;
+  }
+  .logo{
+    width:44px; height:44px; border-radius:12px; background:radial-gradient(90px 90px at 30% 30%, var(--brand) 0%, #3b1f8f 50%, #111 100%);
+    display:grid; place-items:center; box-shadow: inset 0 0 40px rgba(124,77,255,.35), 0 10px 22px rgba(0,0,0,.4);
+    font-weight:800; letter-spacing:.5px;
+  }
+  .brand h1{font-size:16px; margin:0}
+  .brand small{display:block; font-size:11px; color:var(--sub); letter-spacing:.3px}
+  .nav{margin-top:8px; display:flex; flex-direction:column; gap:6px}
+  .nav a{
+    padding:10px 12px; border-radius:12px; color:var(--text);
+    display:flex; align-items:center; gap:10px; border:1px solid transparent;
+  }
+  .nav a:hover{background:var(--hover); border-color:var(--border)}
+  .nav a.active{background:linear-gradient(90deg, rgba(124,77,255,.18), transparent 90%); border-color:var(--brand); }
+  .nav .tag{margin-left:auto; font-size:11px; background:var(--chip); padding:2px 8px; border-radius:999px; color:var(--sub); border:1px solid var(--border)}
+  .sidebar .footer{
+    margin-top:18px; padding-top:14px; border-top:1px dashed var(--border); color:var(--sub); font-size:12px;
+  }
 
-    /* NAV */
-    .nav{position:sticky;top:0;z-index:50;backdrop-filter: blur(10px); background:rgba(8,8,12,.35); border-bottom:1px solid rgba(255,255,255,.06)}
-    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
-    .brand{display:flex;align-items:center;gap:.75rem}
-    .brand img{width:36px;height:36px;border-radius:10px;box-shadow:var(--glow)}
-    .brand-title{font-family:"Space Grotesk";font-weight:700;letter-spacing:.2px}
-    .nav-links{display:flex;gap:1.2rem}
-    .nav-links a{color:var(--muted)}
-    .cta{padding:.7rem 1rem;border-radius:12px;border:1px solid #2a2b3d;background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); box-shadow:var(--shadow)}
-    .cta:hover{transform:translateY(-1px)}
-
-    /* HERO */
-    .hero{position:relative;padding:72px 0 48px}
-    .hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center}
-    h1{font:800 46px/1.06 "Space Grotesk", "Inter", sans-serif; letter-spacing:-.5px; margin:0 0 16px}
-    .lead{font-size:1.125rem;color:#cfd1dd;max-width:58ch}
-    .hero-ctas{display:flex;gap:.8rem;margin-top:22px}
-    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.1rem;border-radius:14px;border:1px solid #2a2b3d;background:#141523;box-shadow:var(--shadow);font-weight:600}
-    .btn.primary{background:linear-gradient(135deg, rgba(122,92,255,.18), rgba(0,209,255,.18)); border-color:#3b2e6e}
-    .btn .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(90deg,var(--accent1),var(--accent2))}
-
-    /* Feature grid */
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px}
-    .card{padding:20px;border-radius:var(--radius); background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid #1f2030; box-shadow:var(--shadow)}
-    .card h3{margin:0 0 8px;font:700 18px/1.2 "Inter"}
-    .card p{margin:0;color:var(--muted)}
-
-    /* Section wrapper */
-    section{padding:72px 0;border-top:1px solid var(--line)}
-    section h2{font:800 34px/1.1 "Space Grotesk"; margin:0 0 14px}
-    .sub{color:var(--muted);max-width:72ch}
-
-    /* List */
-    .list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
-    .li{display:flex;gap:.8rem;align-items:flex-start;padding:14px 14px;border:1px solid #1f2030;border-radius:14px;background:rgba(255,255,255,.02)}
-    .li svg{flex:none;opacity:.9}
-
-    /* TABS */
-    .tabs{margin-top:28px;border:1px solid #1e2031;border-radius:var(--radius-lg); overflow:hidden;background:rgba(255,255,255,.02)}
-    .tab-bar{display:flex;overflow:auto;border-bottom:1px solid #1e2031}
-    .tab-bar button{flex:1 0 auto;padding:14px 18px;background:none;border:0;color:var(--muted);font-weight:600;border-right:1px solid #1e2031;cursor:pointer}
-    .tab-bar button.active{color:var(--text);background:linear-gradient(180deg,rgba(122,92,255,.18),rgba(0,209,255,.12))}
-    .tab{display:none;padding:24px}
-    .tab.active{display:block}
-    .tab .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
-    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.8rem;padding:.25rem .5rem;border:1px solid #2a2b3d;border-radius:8px;background:#0f111a;color:#d0d3e2}
-
-    /* Diagram */
-    .diagram{margin-top:22px;border-radius:var(--radius-lg);background:radial-gradient(240px 160px at 10% 20%, rgba(122,92,255,.15), rgba(0,0,0,0)), radial-gradient(240px 160px at 90% 60%, rgba(0,209,255,.12), rgba(0,0,0,0)), #0f1118; border:1px solid #1f2131; box-shadow:var(--shadow); padding:20px}
-    .diagram svg{width:100%;height:auto;display:block}
-
-    /* Footer */
-    footer{padding:54px 0;color:var(--muted)}
-    .foot-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
-
-    /* Reveal on scroll */
-    .reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease, transform .7s ease}
-    .reveal.visible{opacity:1;transform:none}
-
-    /* Responsive */
-    @media (max-width: 920px){
-      .hero-grid{grid-template-columns:1fr}
-      .cards{grid-template-columns:1fr}
-      .list{grid-template-columns:1fr}
-      .tab .two-col{grid-template-columns:1fr}
-    }
-  </style>
+  /* Main */
+  .main{display:flex; flex-direction:column; min-height:100vh}
+  .topbar{
+    position:sticky; top:0; z-index:5; background:rgba(12,12,24,.7); backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border); padding:10px 16px; display:flex; align-items:center; gap:12px;
+  }
+  .search{
+    flex:1; display:flex; gap:8px; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:8px 10px;
+  }
+  .search input{
+    flex:1; background:transparent; color:var(--text); border:0; outline:0; font-size:14px;
+  }
+  .btn, button{
+    background:linear-gradient(180deg, var(--brand) 0%, #5c35ff 100%); border:0; color:white; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600;
+    box-shadow: 0 8px 18px rgba(124,77,255,.25);
+  }
+  .btn.secondary{background:var(--chip); color:var(--text); border:1px solid var(--border); box-shadow:none; font-weight:500}
+  .btn.ghost{background:transparent; border:1px solid var(--border); color:var(--sub); font-weight:500}
+  .range{
+    display:flex; gap:8px; align-items:center;
+    background:var(--panel); border:1px solid var(--border); padding:6px 8px; border-radius:12px; color:var(--sub);
+  }
+  .content{padding:20px; display:grid; gap:14px}
+  .grid{display:grid; gap:14px}
+  .grid.cols-4{grid-template-columns: repeat(4, minmax(0,1fr))}
+  .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
+  .card{
+    background:linear-gradient(180deg, rgba(124,77,255,.06), transparent 30%), var(--panel);
+    border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow);
+  }
+  .card h3{margin:0 0 8px; font-size:14px; color:var(--sub); font-weight:600; letter-spacing:.3px}
+  .kpi{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:8px;
+  }
+  .kpi .value{font-size:28px; font-weight:800; letter-spacing:.3px}
+  .kpi .delta{font-size:12px; padding:2px 8px; border-radius:999px; background:var(--chip); border:1px solid var(--border); color:var(--sub)}
+  .kpi .delta.good{color:var(--good); border-color:rgba(34,197,94,.4)}
+  .kpi .delta.bad{color:var(--bad); border-color:rgba(239,68,68,.4)}
+  .table{
+    width:100%; border-collapse:separate; border-spacing:0; overflow:auto;
+  }
+  .table th, .table td{
+    text-align:left; padding:10px; border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  .table th{
+    font-size:12px; text-transform:uppercase; letter-spacing:.4px; color:var(--sub);
+    position:sticky; top:0; background:linear-gradient(180deg, rgba(17,17,34,.7), rgba(17,17,34,.95));
+    backdrop-filter: blur(8px); z-index:1;
+  }
+  .table tr:hover td{background:rgba(124,77,255,.06)}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{background:var(--chip); border:1px solid var(--border); padding:6px 10px; border-radius:999px; color:var(--sub); font-size:12px}
+  .flex{display:flex; gap:10px; align-items:center}
+  .row{display:flex; gap:14px; flex-wrap:wrap}
+  .grow{flex:1}
+  .spark{height:32px}
+  .svgchart{width:100%; height:180px}
+  .muted{color:var(--sub)}
+  .pill{padding:2px 8px; border-radius:999px; border:1px solid var(--border); background:var(--chip); font-size:11px; color:var(--sub)}
+  .severity-high{color:#fff; background:linear-gradient(180deg, rgba(239,68,68,.9), rgba(239,68,68,.6)); border:0}
+  .severity-med{color:#111; background:linear-gradient(180deg, rgba(245,158,11,.9), rgba(245,158,11,.6)); border:0}
+  .severity-low{color:#07130c; background:linear-gradient(180deg, rgba(34,197,94,.9), rgba(34,197,94,.6)); border:0}
+  .section-title{font-size:18px; margin:0 0 6px}
+  .toolbar{display:flex; gap:8px; align-items:center; justify-content:space-between; margin-bottom:8px}
+  .divider{height:1px; background:var(--border); margin:8px 0}
+  .foot-note{font-size:12px; color:var(--sub)}
+  .badge{padding:2px 6px; border:1px solid var(--border); border-radius:6px; font-size:11px; color:var(--sub); background:var(--chip)}
+  .right{margin-left:auto}
+  .hidden{display:none !important}
+  /* Responsive */
+  @media (max-width:1100px){ .grid.cols-4{grid-template-columns: repeat(2, minmax(0,1fr))} .app{grid-template-columns: 88px 1fr} .nav .txt{display:none} .brand small{display:none} }
+  @media (max-width:720px){ .grid.cols-3{grid-template-columns:1fr} .grid.cols-4{grid-template-columns:1fr} .app{grid-template-columns:1fr} .sidebar{position:static; height:auto} .topbar{flex-wrap:wrap} }
+</style>
 </head>
 <body>
-  <!-- Navigation -->
-  <div class="nav">
-    <div class="container nav-inner">
-      <div class="brand">
-        <img alt="Microknots logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYn" onerror="this.src='';" />
-        <strong class="brand-title">microknots</strong>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">AD</div>
+      <div>
+        <h1>Aurelo Data <small>Grocery OS</small></h1>
+        <small>Store #204 · Raleigh, NC</small>
       </div>
-      <nav class="nav-links">
-        <a href="#who">Who we are</a>
-        <a href="#different">Differentiators</a>
-        <a href="#products">Products</a>
-        <a href="#superapp">Super App</a>
-        <a href="#better">Why us</a>
-      </nav>
-      <a class="cta" href="#contact">Contact</a>
+    </div>
+    <nav class="nav" id="nav">
+      <a href="#overview" data-route="overview" class="active"><span>📊</span> <span class="txt">Overview</span></a>
+      <a href="#prices" data-route="prices"><span>🏷️</span> <span class="txt">Prices</span> <span class="tag" id="priceBadge">12 recs</span></a>
+      <a href="#inventory" data-route="inventory"><span>📦</span> <span class="txt">Inventory</span></a>
+      <a href="#suppliers" data-route="suppliers"><span>🤝</span> <span class="txt">Suppliers</span></a>
+      <a href="#customers" data-route="customers"><span>🧑‍🤝‍🧑</span> <span class="txt">Customers</span></a>
+      <a href="#promotions" data-route="promotions"><span>🎯</span> <span class="txt">Promotions</span></a>
+      <a href="#forecast" data-route="forecast"><span>📈</span> <span class="txt">Forecast</span></a>
+      <a href="#alerts" data-route="alerts"><span>🚨</span> <span class="txt">Alerts & Tasks</span> <span class="tag" id="alertBadge">3</span></a>
+      <a href="#settings" data-route="settings"><span>⚙️</span> <span class="txt">Settings</span></a>
+    </nav>
+    <div class="footer">
+      <div class="chips">
+        <span class="chip">Microknots models</span>
+        <span class="chip">RAG pricing engine</span>
+        <span class="chip">Realtime POS</span>
+      </div>
+      <div style="margin-top:10px">© 2025 Aurelo Data</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="search">
+        <span>🔎</span>
+        <input id="searchInput" placeholder="Search products, SKUs, suppliers, customers…" />
+      </div>
+      <div class="range">
+        <span>📅</span>
+        <select id="rangeSelect">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </div>
+      <button class="btn secondary" id="exportBtn">Export CSV</button>
+      <button class="btn ghost" id="themeBtn" title="Toggle contrast">🌗 Theme</button>
+      <button class="btn" id="refreshBtn">↻ Refresh</button>
+    </header>
+
+    <!-- CONTENT -->
+    <section class="content" id="view"></section>
+  </main>
+</div>
+
+<script>
+/* ---------------------------
+   Minimal util + mock engine
+----------------------------*/
+const fmt = {
+  money:n=>"$"+(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}),
+  int:n=>(n|0).toLocaleString(),
+  pct:n=>(n>=0?"+":"")+(n*100).toFixed(1)+"%",
+  date:d=>new Date(d).toLocaleDateString(),
+};
+const rand=(min,max)=>Math.random()*(max-min)+min;
+const choice=a=>a[(Math.random()*a.length)|0];
+const seeded = (seed=42)=>()=> (seed = (seed*16807)%2147483647)/2147483647;
+const rng = seeded(204);
+
+/* Mock catalogs & data */
+const Departments = ["Produce","Dairy","Bakery","Meat","Seafood","Pantry","Frozen","Beverages","Snacks","Household","Personal Care","International"];
+const Suppliers = ["GreenFields","NorthOcean","SunDairy","PrimeButchers","SweetBake","BlueRiver","Vista Produce","Marco Imports","Chill&Freeze","Sparkle Home","CarePlus"];
+
+function generateProducts(count=120){
+  const out=[];
+  for(let i=0;i<count;i++){
+    const dep=choice(Departments);
+    const supplier=choice(Suppliers);
+    const unitCost=+(rand(0.4,18.0)).toFixed(2);
+    const margin=rand(0.18,0.42);
+    const price=+(unitCost/(1-margin)).toFixed(2);
+    const comp=+(price*rand(.9,1.1)).toFixed(2);
+    const rec=+(comp*rand(.97,1.03)).toFixed(2);
+    const sku="SKU-"+(100000+i);
+    const stock=(rand(0,400))|0;
+    const salesUnits=(rand(5,180))|0;
+    const revenue=+(price*salesUnits).toFixed(2);
+    const dos= stock/Math.max(salesUnits/30,1/30);
+    out.push({
+      sku, name: generateName(dep), department: dep, supplier,
+      unitCost, price, competitor: comp, recPrice: rec,
+      margin: (price-unitCost)/price,
+      stock, reorderPoint: (rand(12,50))|0,
+      salesUnits, revenue, last30: sparkData(30), dos,
+      wasteRate: rand(0.00, dep==="Produce"||dep==="Bakery"?0.08:0.03),
+      promoLift: rand(0.90,1.35)
+    });
+  }
+  return out;
+}
+function generateName(dep){
+  const base = {
+    Produce:["Gala Apples","Bananas","Baby Spinach","Roma Tomatoes","Avocados"],
+    Dairy:["Whole Milk","Greek Yogurt","Cheddar","Butter","Cottage Cheese"],
+    Bakery:["Sourdough Loaf","Blueberry Muffins","Baguette","Croissant","Whole Wheat Bread"],
+    Meat:["Chicken Breast","Ground Beef","Pork Chops","Turkey Slices","Bacon"],
+    Seafood:["Salmon Fillet","Shrimp","Tilapia","Tuna Steaks","Crab Cakes"],
+    Pantry:["Jasmine Rice","Black Beans","Olive Oil","Tomato Sauce","Pasta"],
+    Frozen:["Frozen Pizza","Mixed Veggies","Ice Cream","Waffles","Chicken Nuggets"],
+    Beverages:["Orange Juice","Cola 12pk","Cold Brew","Sparkling Water","Green Tea"],
+    Snacks:["Potato Chips","Trail Mix","Chocolate Bar","Protein Bars","Pretzels"],
+    Household:["Paper Towels","Laundry Detergent","Dish Soap","Trash Bags","Toilet Paper"],
+    Personal Care:["Shampoo","Toothpaste","Lotion","Body Wash","Deodorant"],
+    International:["Naan Bread","Curry Paste","Ramen Pack","Kimchi","Salsa Verde"]
+  }[dep] || ["Item"];
+  return choice(base);
+}
+function sparkData(n){
+  const arr=[]; let base=rand(6,20);
+  for(let i=0;i<n;i++){ base=Math.max(1, base + rand(-2.5,2.5)); arr.push(+base.toFixed(2)); }
+  return arr;
+}
+
+let DB = {
+  products: generateProducts(180),
+  alerts: [
+    {id:1, severity:"high", text:"Out-of-stock risk: Gala Apples < 1 day of supply", created:Date.now()-3600e3},
+    {id:2, severity:"med", text:"Price anomaly: Whole Milk priced 9% above competitor", created:Date.now()-5*3600e3},
+    {id:3, severity:"low", text:"Supplier GreenFields on-time rate 96% ↑", created:Date.now()-86400e3},
+  ],
+  tasks: [
+    {id:11, done:false, txt:"Approve 12 price recommendations"},
+    {id:12, done:false, txt:"Send PO to Vista Produce"},
+    {id:13, done:false, txt:"Schedule Weekend BOGO for Snacks"},
+  ]
+};
+
+/* Simple hash router */
+const routes = {
+  overview: renderOverview,
+  prices: renderPrices,
+  inventory: renderInventory,
+  suppliers: renderSuppliers,
+  customers: renderCustomers,
+  promotions: renderPromotions,
+  forecast: renderForecast,
+  alerts: renderAlerts,
+  settings: renderSettings
+};
+function navigate(){
+  const hash = (location.hash || "#overview").replace("#","");
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active', a.dataset.route===hash));
+  const view = document.getElementById('view');
+  view.innerHTML = "";
+  (routes[hash]||routes.overview)(view);
+}
+window.addEventListener('hashchange', navigate);
+
+/* Search + export + theme */
+const searchInput = document.getElementById('searchInput');
+const rangeSelect = document.getElementById('rangeSelect');
+searchInput.addEventListener('input', debounce(()=> { window._globalQuery = searchInput.value.trim().toLowerCase(); navigate(); }, 200));
+rangeSelect.addEventListener('change', ()=>navigate());
+document.getElementById('refreshBtn').addEventListener('click', ()=>{
+  DB.products = generateProducts(180);
+  toast("Data stream refreshed");
+  navigate();
+});
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  const was = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  if(was==="#0b0b12"){ // toggle to light
+    document.documentElement.style.setProperty('--bg','#f6f7fb');
+    document.documentElement.style.setProperty('--panel','#ffffff');
+    document.documentElement.style.setProperty('--muted','#f0eff9');
+    document.documentElement.style.setProperty('--hover','#f4f4ff');
+    document.documentElement.style.setProperty('--text','#0d0d14');
+    document.documentElement.style.setProperty('--sub','#51516a');
+    document.documentElement.style.setProperty('--chip','#f4f4ff');
+    document.documentElement.style.setProperty('--border','#e6e6fe');
+  }else{ // back to dark
+    document.location.reload(); // simplest reset of vars
+  }
+});
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const csv = toCSV(DB.products);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), {href:url, download:`aurelo-grocery-${Date.now()}.csv`});
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+/* Helpers */
+function debounce(fn,ms){let t;return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}}
+function toCSV(rows){
+  const cols = ["sku","name","department","supplier","unitCost","price","competitor","recPrice","margin","stock","reorderPoint","salesUnits","revenue","dos","wasteRate","promoLift"];
+  const head = cols.join(",");
+  const body = rows.map(r=>cols.map(k=>String(r[k]).replace(/,/g,"")).join(",")).join("\n");
+  return head+"\n"+body;
+}
+function chip(txt){ return `<span class="chip">${txt}</span>` }
+function pill(txt, cls=""){ return `<span class="pill ${cls}">${txt}</span>` }
+function toast(msg){
+  const el = document.createElement('div');
+  el.textContent = msg;
+  Object.assign(el.style, {position:'fixed', right:'16px', bottom:'16px', background:'rgba(17,17,34,.9)', padding:'10px 14px', border:'1px solid var(--border)', borderRadius:'12px', boxShadow:'var(--shadow)', zIndex:99});
+  document.body.appendChild(el); setTimeout(()=>el.remove(), 2200);
+}
+
+/* Minimal SVG charts (no deps) */
+function lineSVG(data, {w=520,h=180,p=16}={}){
+  const min=Math.min(...data), max=Math.max(...data);
+  const x=i=>p + i*( (w-2*p)/(data.length-1) );
+  const y=v=> h-p - ( (v-min)/(max-min||1) )*(h-2*p);
+  let d="M"+x(0)+","+y(data[0]);
+  for(let i=1;i<data.length;i++){ d+=" L"+x(i)+","+y(data[i]); }
+  const dots = data.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="2.6"/>`).join("");
+  const grad = `linearGradient-${Math.random().toString(36).slice(2)}`;
+  return `<svg class="svgchart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="${grad}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--brand)"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
+    <path d="${d}" fill="none" stroke="var(--brand-2)" stroke-width="2"/>
+    ${dots}
+  </svg>`;
+}
+function barSVG(series, labels, {w=520,h=180,p=16}={}){
+  const max = Math.max(...series, 10);
+  const bw = (w-2*p)/series.length - 6;
+  const bars = series.map((v,i)=>{
+    const x = p + i*((w-2*p)/series.length);
+    const hh = ((v/max)*(h-2*p));
+    return `<rect x="${x}" y="${h-p-hh}" width="${bw}" height="${hh}" rx="6" ry="6" />`;
+  }).join("");
+  return `<svg class="svgchart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <g fill="var(--brand-2)" opacity=".9">${bars}</g>
+  </svg>`;
+}
+function sparkSVG(arr){
+  const min=Math.min(...arr), max=Math.max(...arr), w=120,h=32,p=2;
+  const x=i=>p + i*( (w-2*p)/(arr.length-1) );
+  const y=v=> h-p - ( (v-min)/(max-min||1) )*(h-2*p);
+  let d="M"+x(0)+","+y(arr[0]);
+  for(let i=1;i<arr.length;i++){ d+=" L"+x(i)+","+y(arr[i]); }
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  </svg>`;
+}
+
+/* Filters */
+function applyQuery(products){
+  const q = (window._globalQuery||"").trim();
+  if(!q) return products;
+  return products.filter(p=>{
+    const s = `${p.sku} ${p.name} ${p.department} ${p.supplier}`.toLowerCase();
+    return q.split(/\s+/).every(tok=>s.includes(tok));
+  });
+}
+
+/* ---------------------------
+   Views
+----------------------------*/
+function renderOverview(root){
+  const products = applyQuery(DB.products);
+  // KPIs
+  const revenue = products.reduce((a,b)=>a+b.revenue,0);
+  const units = products.reduce((a,b)=>a+b.salesUnits,0);
+  const oos = products.filter(p=>p.stock<=p.reorderPoint).length;
+  const margin = products.reduce((a,b)=>a + (b.price-b.unitCost)*b.salesUnits,0) / Math.max(revenue,1);
+  const ab = revenue / Math.max( (rand(850,1200)|0), 1);
+
+  const head = document.createElement('div');
+  head.innerHTML = `
+  <div class="toolbar">
+    <div>
+      <h2 class="section-title">📊 Store Overview</h2>
+      <div class="muted">Real-time view · ${fmt.date(Date.now())}</div>
+    </div>
+    <div class="chips">
+      ${chip("POS: Online")}
+      ${chip("Inventory: Synced")}
+      ${chip("Pricing Engine: Ready")}
     </div>
   </div>
+  `;
+  root.appendChild(head);
 
-  <!-- Hero -->
-  <header class="hero container">
-    <div class="hero-grid">
-      <div>
-        <span class="pill">Full‑stack AI Platform</span>
-        <h1><span class="gradient-text">Trainable, adaptive AI</span> that you can own and scale.</h1>
-        <p class="lead">Microknots builds end‑to‑end systems—models, data, infrastructure—so businesses operate with sub‑second intelligence across finance, trading, data, and marketing.</p>
-        <div class="hero-ctas">
-          <a class="btn primary" href="#products"><span class="dot"></span> Explore Products</a>
-          <a class="btn" href="#contact">Talk to us</a>
-        </div>
-        <div class="cards">
-          <div class="card"><h3>Cloud‑native GPUs</h3><p>Enterprise clusters engineered for low‑latency inference and training.</p></div>
-          <div class="card"><h3>Own your IP</h3><p>Models, weights, and data flows remain yours. No vendor lock‑in.</p></div>
-          <div class="card"><h3>Continuous learning</h3><p>Feedback loops improve performance across every module.</p></div>
-        </div>
+  const kpis = document.createElement('div');
+  kpis.className="grid cols-4";
+  kpis.innerHTML = `
+    <div class="card"><h3>Revenue (MTD)</h3>
+      <div class="kpi"><div class="value">${fmt.money(revenue)}</div><div class="delta good">${fmt.pct(rand(.03,.12))} vs prev</div></div>
+    </div>
+    <div class="card"><h3>Units Sold</h3>
+      <div class="kpi"><div class="value">${fmt.int(units)}</div><div class="delta">${fmt.pct(rand(-.03,.06))}</div></div>
+    </div>
+    <div class="card"><h3>Avg Basket</h3>
+      <div class="kpi"><div class="value">${fmt.money(ab)}</div><div class="delta good">${fmt.pct(rand(.01,.05))}</div></div>
+    </div>
+    <div class="card"><h3>Gross Margin</h3>
+      <div class="kpi"><div class="value">${(margin*100).toFixed(1)}%</div><div class="delta ${margin>0.28?"good":"bad"}">${fmt.pct(margin-0.28)}</div></div>
+    </div>
+  `;
+  root.appendChild(kpis);
+
+  // Charts Row
+  const r2 = document.createElement('div'); r2.className="grid cols-3";
+  const last30 = sparkData(30).map((v,i)=> v* (1 + Math.sin(i/5)/8));
+  const deptTotals = Departments.map(dep=> products.filter(p=>p.department===dep).reduce((a,b)=>a+b.revenue,0));
+  const hours = Array.from({length:24},(_,h)=>({h, sales: rand(100,600)}));
+  r2.innerHTML = `
+    <div class="card">
+      <h3>Revenue — Last ${rangeSelect.value} Days</h3>
+      ${lineSVG(last30)}
+      <div class="foot-note">${pill("Model: Juniper Forecast v2")} ${pill("Confidence 92%","severity-low")}</div>
+    </div>
+    <div class="card">
+      <h3>Sales by Department</h3>
+      ${barSVG(deptTotals, Departments)}
+      <div class="chips" style="margin-top:8px;">${Departments.slice(0,6).map(d=>chip(`${d}`)).join("")}</div>
+    </div>
+    <div class="card">
+      <h3>Hourly Heat (today)</h3>
+      <div class="row">
+        ${hours.slice(7,22).map(o=> `<div class="chip" title="Hour ${o.h}:00">${String(o.h).padStart(2,"0")}:00 · ${fmt.int(o.sales)}</div>`).join("")}
       </div>
-      <div>
-        <div class="diagram" aria-hidden="true">
-          <!-- Neon system map (inline SVG) -->
-          <svg viewBox="0 0 800 560" role="img" aria-label="Microknots system diagram">
-            <defs>
-              <linearGradient id="g1" x1="0" x2="1">
-                <stop stop-color="#7a5cff"/>
-                <stop offset="1" stop-color="#00d1ff"/>
-              </linearGradient>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <rect x="20" y="20" width="760" height="520" rx="24" fill="#0c0f18" stroke="#1f2131"/>
-            <!-- core -->
-            <circle cx="400" cy="280" r="68" fill="#111426" stroke="#2a2d42"/>
-            <text x="400" y="266" text-anchor="middle" fill="#cfd1dd" font-family="Inter" font-weight="700">LLM +</text>
-            <text x="400" y="292" text-anchor="middle" fill="#cfd1dd" font-family="Inter" font-weight="700">Vector Core</text>
-            <text x="400" y="318" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">shared across modules</text>
-            <!-- nodes -->
-            <g filter="url(#glow)">
-              <path d="M400 128 L400 212" stroke="url(#g1)" stroke-width="2"/>
-              <path d="M400 348 L400 432" stroke="url(#g1)" stroke-width="2"/>
-              <path d="M254 280 L332 280" stroke="url(#g1)" stroke-width="2"/>
-              <path d="M546 280 L468 280" stroke="url(#g1)" stroke-width="2"/>
-            </g>
-            <!-- top -->
-            <rect x="340" y="60" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
-            <text x="400" y="89" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Finance</text>
-            <text x="400" y="105" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">Aurelo</text>
-            <!-- bottom -->
-            <rect x="340" y="452" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
-            <text x="400" y="481" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Marketing</text>
-            <text x="400" y="497" text-anchor="middle" fill="#9fa3b8" font-family="Inter" font-size="12">Suite</text>
-            <!-- left -->
-            <rect x="148" y="256" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
-            <text x="208" y="285" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Data Packets</text>
-            <!-- right -->
-            <rect x="532" y="256" width="120" height="48" rx="12" fill="#121528" stroke="#2a2d42"/>
-            <text x="592" y="285" text-anchor="middle" fill="#dbe0ff" font-family="Inter" font-weight="700">Trading Bots</text>
-          </svg>
-        </div>
+      <div class="divider"></div>
+      <div class="muted">Peak expected: 17:00–19:00 · schedule front-end staff +1</div>
+    </div>
+  `;
+  root.appendChild(r2);
+
+  // Price recs preview
+  const recs = products.filter(p=> Math.abs(p.recPrice - p.price)/p.price > 0.03).slice(0,10);
+  document.getElementById('priceBadge').textContent = recs.length+" recs";
+  const table = document.createElement('div'); table.className="card";
+  table.innerHTML = `
+    <div class="toolbar">
+      <div><h3>Top Price Opportunities</h3></div>
+      <div class="chips">
+        ${chip("Elasticity-aware")}
+        ${chip("Competitor indexed")}
+        ${chip("MAP safe")}
+        <a class="btn secondary" href="#prices">Review all</a>
       </div>
     </div>
-  </header>
+    <div style="overflow:auto; max-height:320px; border-radius:12px; border:1px solid var(--border)">
+      <table class="table">
+        <thead><tr>
+          <th>SKU</th><th>Product</th><th>Dept</th><th>Cur</th><th>Comp</th><th>Rec</th><th>Δ</th><th>Margin</th><th>Trend</th>
+        </tr></thead>
+        <tbody>
+          ${recs.map(p=>{
+            const diff = (p.recPrice - p.price)/p.price;
+            return `<tr>
+              <td>${p.sku}</td>
+              <td>${p.name}</td>
+              <td>${p.department}</td>
+              <td>${fmt.money(p.price)}</td>
+              <td>${fmt.money(p.competitor)}</td>
+              <td><b>${fmt.money(p.recPrice)}</b></td>
+              <td>${pill(fmt.pct(diff), diff>=0?"severity-low":"severity-med")}</td>
+              <td>${(p.margin*100|0)}%</td>
+              <td>${sparkSVG(p.last30)}</td>
+            </tr>`
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+  root.appendChild(table);
 
-  <!-- Who We Are -->
-  <section id="who">
-    <div class="container reveal">
-      <h2>Who We Are</h2>
-      <p class="sub">A full‑stack AI company operating at the intersection of <strong>finance</strong>, <strong>data</strong>, <strong>trading</strong>, and <strong>marketing</strong>.</p>
-      <div class="list">
-        <div class="li">"+
-        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c1' x1='0' x2='1'><stop stop-color='"+"#7a5cff"+"'/><stop offset='1' stop-color='"+"#00d1ff"+"'/></linearGradient></defs></svg>"+
-        "<div><strong>Full‑stack approach.</strong> We build models, pipelines, and infrastructure—not just wrappers.</div>"+
-        "</div>"+
-        "<div class=\"li\">"+
-        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg>"+
-        "<div><strong>Mission‑driven.</strong> Trainable, adaptive AI that organizations can own and scale.</div>"+
-        "</div>"+
-        "<div class=\"li\">"+
-        "<svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#c3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='c3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg>"+
-        "<div><strong>No lock‑in.</strong> Clients own their models, weights, and data flows.</div>"+
-        "</div>"+
-      "</div>"+
-      "</div>"+
-    "</div>"
-  +
-  "</section>\n\n  <!-- What Makes Us Different -->\n  <section id=\"different\">\n    <div class=\"container reveal\">\n      <h2>What Makes Us Different</h2>\n      <p class=\"sub\">Beyond APIs: we restructure LLMs and data backends for each sector.</p>\n      <div class=\"list\">\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d1' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Custom data pipelines → vector DBs, embeddings, tokenization <em>per industry</em>.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Fine‑tuning: LoRA/QLoRA, attention re‑weighting, pruning → smaller, faster, smarter.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#d3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='d3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Cloud‑native GPU clusters engineered for enterprise‑scale, low‑latency performance.</div></div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Products (Tabs) -->\n  <section id=\"products\">\n    <div class=\"container reveal\">\n      <h2>Our Core Products</h2>\n      <p class=\"sub\">Four modules, one brain. Switch tabs to explore.</p>\n      <div class=\"tabs\" data-tabs>\n        <div class=\"tab-bar\">\n          <button class=\"active\" data-tab=\"aurelo\">Aurelo Finance</button>\n          <button data-tab=\"packets\">AI Trainable Data Packets</button>\n          <button data-tab=\"trading\">AI Trading Algorithms & Bots</button>\n          <button data-tab=\"marketing\">AI Marketing Suite</button>\n        </div>\n        <div class=\"tab active\" id=\"tab-aurelo\">\n          <div class=\"two-col\">\n            <div>\n              <h3>Aurelo Finance — AI Wealth & Trading Platform</h3>\n              <ul>\n                <li>Real‑time dashboards for net worth, allocation, and portfolio health.</li>\n                <li>Bots powered by SMA/EMA crossovers, Bollinger triggers, pivot runs, reinforcement learning.</li>\n                <li><strong>Jasper Engine:</strong> tiered models for options, hedging, and hybrid strategies.</li>\n                <li><em>Differentiator:</em> AI‑first execution, not just analytics.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Try a quick flow</h3><p>Export allocations → feed to <span class=\"kbd\">/optimize</span> → produce hedging plan in seconds.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Latency</h3><p>Sub‑second trade signals on GPU clusters.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-packets\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Trainable Data Packets</h3>\n              <ul>\n                <li>Convert messy raw data → LLM‑ready <strong>JSONL/CSV</strong> packets with embeddings + labels.</li>\n                <li>Industry‑agnostic: retail, healthcare, finance, and more.</li>\n                <li>Plug‑and‑play fine‑tuning: hours, not months.</li>\n                <li><em>Differentiator:</em> domain‑specific, structured for real AI learning—not generic corpora.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Pipeline</h3><p>Ingest → Clean → Normalize → Vectorize → Label → Package → Deliver.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Formats</h3><p><span class=\"kbd\">.jsonl</span> · <span class=\"kbd\">.csv</span> · <span class=\"kbd\">FAISS</span>/<span class=\"kbd\">HNSW</span> indices.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-trading\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Trading Algorithms & Bots</h3>\n              <ul>\n                <li>Low‑latency execution with sub‑second reaction.</li>\n                <li><strong>LSTM</strong> + reinforcement learning for adaptive market behavior.</li>\n                <li>Ensemble models combining deep learning with technical indicators.</li>\n                <li><em>Differentiator:</em> self‑optimizing bots that learn and evolve.</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Signal Stack</h3><p>SMA/EMA xovers · Bollinger triggers · Pivot‑run · RL policy.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Risk</h3><p>Position sizing + guardrails baked into execution engine.</p></div>\n            </div>\n          </div>\n        </div>\n        <div class=\"tab\" id=\"tab-marketing\">\n          <div class=\"two-col\">\n            <div>\n              <h3>AI Marketing Suite</h3>\n              <ul>\n                <li>AI chatbots for brand‑voice sales & support.</li>\n                <li>Auto‑generated posts, ads, and scripts.</li>\n                <li>AI commenters/agents for end‑to‑end engagement loops.</li>\n                <li><em>Differentiator:</em> closed‑loop system (content → engagement → analytics).</li>\n              </ul>\n            </div>\n            <div>\n              <div class=\"card\"><h3>Attribution</h3><p>LLM‑based attribution connects creative to conversions across channels.</p></div>\n              <div class=\"card\" style=\"margin-top:12px\"><h3>Voice</h3><p>Style‑consistent generation with brand embeddings.</p></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Super App -->\n  <section id=\"superapp\">\n    <div class=\"container reveal\">\n      <h2>The Microknots Super App</h2>\n      <p class=\"sub\">All products in one integrated platform powered by a shared AI backend.</p>\n      <div class=\"diagram\">\n        <svg viewBox=\"0 0 920 380\">\n          <defs>\n            <linearGradient id=\"wire\" x1=\"0\" x2=\"1\">\n              <stop stop-color=\"#7a5cff\"/><stop offset=\"1\" stop-color=\"#00d1ff\"/>\n            </linearGradient>\n            <filter id=\"glow2\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"3\"/></filter>\n          </defs>\n          <rect x=\"12\" y=\"12\" width=\"896\" height=\"356\" rx=\"22\" fill=\"#0c0f18\" stroke=\"#1f2131\"/>\n          <g stroke=\"url(#wire)\" stroke-width=\"2\" filter=\"url(#glow2)\">\n            <path d=\"M160 190H760\"/>\n            <path d=\"M460 70V310\"/>\n          </g>\n          <g fill=\"#121528\" stroke=\"#2a2d42\">\n            <rect x=\"420\" y=\"154\" width=\"80\" height=\"52\" rx=\"10\"/>\n            <rect x=\"120\" y=\"154\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"300\" y=\"44\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"300\" y=\"256\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"600\" y=\"44\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"600\" y=\"256\" width=\"120\" height=\"52\" rx=\"10\"/>\n            <rect x=\"760\" y=\"154\" width=\"120\" height=\"52\" rx=\"10\"/>\n          </g>\n          <g font-family=\"Inter\" font-weight=\"700\" fill=\"#dbe0ff\">\n            <text x=\"460\" y=\"185\" text-anchor=\"middle\">Core</text>\n            <text x=\"180\" y=\"185\" text-anchor=\"middle\">Data Packets</text>\n            <text x=\"360\" y=\"75\" text-anchor=\"middle\">Finance</text>\n            <text x=\"360\" y=\"287\" text-anchor=\"middle\">Marketing</text>\n            <text x=\"660\" y=\"75\" text-anchor=\"middle\">Trading</text>\n            <text x=\"660\" y=\"287\" text-anchor=\"middle\">Analytics</text>\n            <text x=\"820\" y=\"185\" text-anchor=\"middle\">APIs</text>\n          </g>\n        </svg>\n      </div>\n      <ul class=\"list\" style=\"margin-top:18px\">\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s1)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s1' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Shared AI backend: LLM + vector DB core connects every module.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s2)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s2' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>Cross‑learning ecosystem: trading ↔ marketing ↔ finance ↔ retail.</div></div>\n        <div class=\"li\"><svg width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M20 7L9 18l-5-5' stroke='url(#s3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/><defs><linearGradient id='s3' x1='0' x2='1'><stop stop-color='#7a5cff'/><stop offset='1' stop-color='#00d1ff'/></linearGradient></defs></svg><div>One login. One data flow. One AI brain.</div></div>\n      </ul>\n    </div>\n  </section>\n\n  <!-- Why We're Better -->\n  <section id=\"better\">\n    <div class=\"container reveal\">\n      <h2>Why We’re Better</h2>\n      <div class=\"cards\">\n        <div class=\"card\"><h3>Lower Cost</h3><p>No API tolls. Optimized runtimes and right‑sized models.</p></div>\n        <div class=\"card\"><h3>Faster</h3><p>Sub‑second execution at enterprise scale.</p></div>\n        <div class=\"card\"><h3>Smarter</h3><p>Continuous learning from structured data.</p></div>\n      </div>\n      <div class=\"card\" style=\"margin-top:16px\"><h3>Owned</h3><p>Clients keep IP + control—models, weights, and data flows are yours.</p></div>\n    </div>\n  </section>\n\n  <!-- Contact -->\n  <section id=\"contact\">\n    <div class=\"container reveal\">\n      <h2>Let’s Build Your AI</h2>\n      <p class=\"sub\">DM us or email <a href=\"mailto:microknots.careers@gmail.com\">microknots.careers@gmail.com</a>. We’ll reply with a short discovery plan and an architecture draft.</p>\n      <div class=\"hero-ctas\">\n        <a class=\"btn primary\" href=\"mailto:microknots.careers@gmail.com\"><span class=\"dot\"></span> Start a project</a>\n        <a class=\"btn\" href=\"#\">Book a demo</a>\n      </div>\n    </div>\n  </section>\n\n  <footer>\n    <div class=\"container foot-grid\">\n      <div>© <span id=\"year\"></span> Microknots. All rights reserved.</div>\n      <div class=\"pill\">Built with love for performance • Privacy‑first</div>\n    </div>\n  </footer>\n\n  <script>
-    // Replace tiny inline logo preview with full base64 (kept small above for initial paint)
-    (function(){
-      const img=document.querySelector('.brand img');
-      const big="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYn"+
-      "XGNyZW1haW5kZXI="; // placeholder fragment to keep source compact
-      // swap only if we encoded a longer version during build (optional)
-    })();
+  // Alerts preview
+  const alerts = document.createElement('div'); alerts.className="grid cols-3";
+  document.getElementById('alertBadge').textContent = DB.alerts.length;
+  alerts.innerHTML = DB.alerts.map(a=>`
+    <div class="card">
+      <h3>Alert · ${new Date(a.created).toLocaleTimeString()}</h3>
+      <div class="row"><span class="pill severity-${a.severity}">${a.severity.toUpperCase()}</span>
+      <div>${a.text}</div></div>
+      <div class="divider"></div>
+      <div class="flex">
+        <button class="btn secondary" onclick="ack(${a.id})">Acknowledge</button>
+        <a class="btn ghost" href="#alerts">Open queue</a>
+      </div>
+    </div>
+  `).join("");
+  root.appendChild(alerts);
+}
 
-    // Tabs
-    const tabContainers = document.querySelectorAll('[data-tabs]');
-    tabContainers.forEach(tc=>{
-      const buttons = tc.querySelectorAll('.tab-bar button');
-      const tabs = tc.querySelectorAll('.tab');
-      const activate = key => {
-        buttons.forEach(b=>b.classList.toggle('active', b.dataset.tab===key));
-        tabs.forEach(t=>t.classList.toggle('active', t.id===`tab-${key}`));
-        history.replaceState(null, '', `#${key}`);
-      };
-      buttons.forEach(b=>b.addEventListener('click', ()=>activate(b.dataset.tab)));
-      const hash = location.hash.replace('#','');
-      if(hash){ const match=[...buttons].find(b=>b.dataset.tab===hash); if(match) activate(hash); }
-    });
+function renderPrices(root){
+  const products = applyQuery(DB.products);
+  const items = products
+   .map(p=> ({...p, diff:(p.recPrice-p.price)/p.price}))
+   .sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
 
-    // Reveal on scroll
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
-    }, {threshold:.12});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const header = document.createElement('div'); header.className="toolbar";
+  header.innerHTML = `
+    <div>
+      <h2 class="section-title">🏷️ Price Recommendations</h2>
+      <div class="muted">Elasticity-aware, competitor-indexed, constraint-safe</div>
+    </div>
+    <div class="chips">
+      ${chip("Floor/Ceiling rules")}
+      ${chip("MAP aware")}
+      ${chip("Psychological pricing")}
+      <button class="btn" onclick="bulkApprove()">Approve All</button>
+    </div>
+  `;
+  root.appendChild(header);
 
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  const controls = document.createElement('div'); controls.className="row";
+  controls.innerHTML = `
+    <div class="chips">
+      <label>Dept:</label>
+      <select id="deptFilter" class="chip" onchange="navigate()">
+        <option value="">All</option>
+        ${Departments.map(d=>`<option>${d}</option>`).join("")}
+      </select>
+      <label>Δ threshold:</label>
+      <select id="deltaFilter" class="chip" onchange="navigate()">
+        <option value="0">All</option>
+        <option value="0.02">2%+</option>
+        <option value="0.05" selected>5%+</option>
+        <option value="0.08">8%+</option>
+      </select>
+    </div>
+    <div class="right">
+      ${pill("Engine: Magenta Pricing v3")}
+      ${pill("Explainer: SHAP")}
+      ${pill("Confidence: 0.89")}
+    </div>
+  `;
+  root.appendChild(controls);
+
+  const deptSel = document.getElementById('deptFilter');
+  const dth = parseFloat(document.getElementById('deltaFilter').value||"0");
+  const filtered = items.filter(p=> (deptSel?.value? p.department===deptSel.value : true) && Math.abs(p.diff)>=dth );
+
+  const tbl = document.createElement('div'); tbl.className="card";
+  tbl.innerHTML = `
+    <div style="overflow:auto; max-height:64vh; border-radius:12px; border:1px solid var(--border)">
+      <table class="table">
+        <thead>
+          <tr><th>SKU</th><th>Product</th><th>Dept</th><th>Supplier</th><th>Unit Cost</th><th>Current</th><th>Competitor</th><th>Recommended</th><th>Δ</th><th>Mar%</th><th>DOS</th><th>Risk</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          ${filtered.map(p=>{
+            const risk = p.stock< p.reorderPoint ? "Low Stock" : (p.wasteRate>0.06? "Waste" : "Normal");
+            return `<tr>
+              <td>${p.sku}</td>
+              <td>${p.name}</td>
+              <td>${p.department}</td>
+              <td>${p.supplier}</td>
+              <td>${fmt.money(p.unitCost)}</td>
+              <td>${fmt.money(p.price)}</td>
+              <td>${fmt.money(p.competitor)}</td>
+              <td><b>${fmt.money(p.recPrice)}</b></td>
+              <td>${pill(fmt.pct((p.recPrice-p.price)/p.price), ((p.recPrice-p.price)>=0?"severity-low":"severity-med"))}</td>
+              <td>${(p.margin*100|0)}%</td>
+              <td>${(p.dos).toFixed(1)}</td>
+              <td>${pill(risk, risk==="Low Stock"?"severity-med":(risk==="Waste"?"severity-med":""))}</td>
+              <td><button class="btn secondary" onclick='approve("${p.sku}")'>Approve</button></td>
+            </tr>`
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+  root.appendChild(tbl);
+}
+
+function renderInventory(root){
+  const products = applyQuery(DB.products).sort((a,b)=>a.stock - b.stock);
+  const low = products.filter(p=>p.stock<=p.reorderPoint);
+  const invHeader = document.createElement('div'); invHeader.className="toolbar";
+  invHeader.innerHTML = `
+    <div>
+      <h2 class="section-title">📦 Inventory</h2>
+      <div class="muted">${low.length} items at or below reorder point</div>
+    </div>
+    <div class="chips">
+      ${chip("Cycle Count")}
+      ${chip("FIFO")}
+      <button class="btn" onclick="genPO()">Generate PO</button>
+    </div>
+  `;
+  root.appendChild(invHeader);
+
+  const inv = document.createElement('div'); inv.className="card";
+  inv.innerHTML = `
+    <div style="overflow:auto; max-height:64vh; border-radius:12px; border:1px solid var(--border)">
+      <table class="table">
+        <thead><tr><th>SKU</th><th>Name</th><th>Dept</th><th>Stock</th><th>Reorder</th><th>DOS</th><th>Waste%</th><th>Supplier</th><th>Last 30d</th><th>Action</th></tr></thead>
+        <tbody>
+          ${products.slice(0,120).map(p=>`
+          <tr>
+            <td>${p.sku}</td><td>${p.name}</td><td>${p.department}</td>
+            <td>${fmt.int(p.stock)}</td><td>${fmt.int(p.reorderPoint)}</td>
+            <td>${p.dos.toFixed(1)}</td><td>${(p.wasteRate*100).toFixed(1)}%</td>
+            <td>${p.supplier}</td>
+            <td>${sparkSVG(p.last30)}</td>
+            <td><button class="btn secondary" onclick='reserve("${p.sku}")'>Reserve</button></td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+  root.appendChild(inv);
+}
+
+function renderSuppliers(root){
+  const bySupplier = {};
+  for(const p of applyQuery(DB.products)){
+    const s = (bySupplier[p.supplier] ||= {supplier:p.supplier, revenue:0, items:0, ontime:rand(.90,.99), fill:rand(.90,.99), lead:rand(2,7)});
+    s.revenue += p.revenue; s.items++;
+  }
+  const arr = Object.values(bySupplier).sort((a,b)=>b.revenue-a.revenue);
+  const head = document.createElement('div'); head.className="toolbar";
+  head.innerHTML = `<div><h2 class="section-title">🤝 Supplier Performance</h2>
+  <div class="muted">Lead times, fill rates, on-time delivery, revenue impact</div></div>
+  <div class="chips">${chip("SLA 95%")} ${chip("Chargebacks")} ${chip("Auto-PO")}</div>`;
+  root.appendChild(head);
+
+  const tbl = document.createElement('div'); tbl.className="card";
+  tbl.innerHTML = `
+    <table class="table">
+      <thead><tr><th>Supplier</th><th>Items</th><th>Revenue</th><th>On-time</th><th>Fill</th><th>Lead (d)</th><th>Score</th><th>Action</th></tr></thead>
+      <tbody>
+      ${arr.map(s=>{
+        const score = (s.ontime*0.5 + s.fill*0.4 + (1-s.lead/10)*0.1);
+        return `<tr>
+          <td>${s.supplier}</td>
+          <td>${fmt.int(s.items)}</td>
+          <td>${fmt.money(s.revenue)}</td>
+          <td>${(s.ontime*100).toFixed(1)}%</td>
+          <td>${(s.fill*100).toFixed(1)}%</td>
+          <td>${s.lead.toFixed(1)}</td>
+          <td>${pill((score*100).toFixed(0)+"%", score>0.9?"severity-low":(score<0.8?"severity-med":""))}</td>
+          <td><button class="btn secondary" onclick='openContract("${s.supplier}")'>Open Contract</button></td>
+        </tr>`
+      }).join("")}
+      </tbody>
+    </table>
+  `;
+  root.appendChild(tbl);
+}
+
+function renderCustomers(root){
+  // Simple cohort/segment mock
+  const segments = [
+    {name:"Budget Families", share:34, ab:42.1, freq:1.3, churn:8.5},
+    {name:"Health Conscious", share:18, ab:31.9, freq:1.1, churn:6.1},
+    {name:"Convenience Shoppers", share:22, ab:27.5, freq:0.9, churn:12.4},
+    {name:"Foodies", share:10, ab:55.4, freq:0.8, churn:7.2},
+    {name:"Loyalists", share:16, ab:48.2, freq:1.7, churn:3.8},
+  ];
+  const head = document.createElement('div'); head.className="toolbar";
+  head.innerHTML = `<div><h2 class="section-title">🧑‍🤝‍🧑 Customers & Cohorts</h2>
+  <div class="muted">Segments, basket analysis, retention</div></div>
+  <div class="chips">${chip("Loyalty")} ${chip("CLV")} ${chip("RFM")}</div>`;
+  root.appendChild(head);
+
+  const grid = document.createElement('div'); grid.className="grid cols-3";
+  grid.innerHTML = segments.map(s=>`
+    <div class="card">
+      <h3>${s.name}</h3>
+      <div class="kpi"><div class="value">${s.share}%</div><div class="delta">${fmt.pct(rand(-.03,.06))}</div></div>
+      <div class="chips">
+        ${chip("Avg Basket "+fmt.money(s.ab))}
+        ${chip("Freq "+s.freq+"/wk")}
+        ${chip("Churn "+s.churn+"%")}
+      </div>
+      <div class="divider"></div>
+      <div class="muted">Top Items: ${choice(Departments)} · ${choice(Departments)} · ${choice(Departments)}</div>
+    </div>
+  `).join("");
+  root.appendChild(grid);
+
+  const table = document.createElement('div'); table.className="card";
+  const topSKUs = applyQuery(DB.products).sort((a,b)=>b.revenue-a.revenue).slice(0,15);
+  table.innerHTML = `
+    <h3>Basket Lift — Cross-sell Pairs</h3>
+    <table class="table">
+      <thead><tr><th>Anchor</th><th>Pair</th><th>Support</th><th>Confidence</th><th>Lift</th><th>Action</th></tr></thead>
+      <tbody>
+        ${topSKUs.slice(0,10).map(a=>{
+          const b = choice(topSKUs);
+          return `<tr>
+            <td>${a.name}</td><td>${b.name}</td>
+            <td>${(rand(.06,.22)*100).toFixed(1)}%</td>
+            <td>${(rand(.32,.78)*100).toFixed(1)}%</td>
+            <td>${rand(1.05,1.8).toFixed(2)}×</td>
+            <td><button class="btn secondary">Create Promo</button></td>
+          </tr>`
+        }).join("")}
+      </tbody>
+    </table>
+  `;
+  root.appendChild(table);
+}
+
+function renderPromotions(root){
+  const head = document.createElement('div'); head.className="toolbar";
+  head.innerHTML = `<div><h2 class="section-title">🎯 Promotions</h2>
+  <div class="muted">A/B tests, lift, cannibalization guardrails</div></div>
+  <div class="chips">${chip("BOGO")} ${chip("Mix & Match")} ${chip("Endcap")}</div>`;
+  root.appendChild(head);
+
+  const tests = Array.from({length:8}, (_,i)=>({
+    id:i+1, name:`Test #${i+101}: ${choice(["BOGO Snacks","Milk Discount","Produce Bundle","Weekend Soda","Frozen Mix&Match"])}`,
+    variantA: rand(1.00,1.20), variantB: rand(1.05,1.30), sig: rand(.75,.99), cann: rand(.85,1.05)
+  }));
+  const tbl = document.createElement('div'); tbl.className="card";
+  tbl.innerHTML = `
+    <table class="table">
+      <thead><tr><th>Experiment</th><th>Lift A</th><th>Lift B</th><th>Significance</th><th>Cannibalization</th><th>Decision</th></tr></thead>
+      <tbody>
+        ${tests.map(t=> `<tr>
+          <td>${t.name}</td>
+          <td>${(t.variantA*100-100).toFixed(1)}%</td>
+          <td>${(t.variantB*100-100).toFixed(1)}%</td>
+          <td>${(t.sig*100).toFixed(0)}%</td>
+          <td>${(t.cann*100-100).toFixed(1)}%</td>
+          <td><button class="btn secondary">Roll ${t.variantB>t.variantA?"B":"A"}</button></td>
+        </tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+  root.appendChild(tbl);
+}
+
+function renderForecast(root){
+  const head = document.createElement('div'); head.className="toolbar";
+  head.innerHTML = `<div><h2 class="section-title">📈 Demand Forecast</h2>
+  <div class="muted">Juniper Forecast v2 · 7-day horizon</div></div>
+  <div class="chips">${chip("Holt-Winters")} ${chip("Holiday adj.")} ${chip("Weather")}</div>`;
+  root.appendChild(head);
+
+  const items = applyQuery(DB.products).sort((a,b)=>b.salesUnits-a.salesUnits).slice(0,12);
+  const grid = document.createElement('div'); grid.className="grid cols-3";
+  grid.innerHTML = items.map(p=>{
+    const base = p.salesUnits/7;
+    const fc = Array.from({length:7}, (_,i)=> Math.max(0,(base*rand(.8,1.2))*(1+(i===5||i===6?0.15:0))));
+    const total = fc.reduce((a,b)=>a+b,0);
+    return `<div class="card">
+      <h3>${p.name} <span class="badge">${p.sku}</span></h3>
+      <div class="kpi"><div class="value">${fmt.int(total)} u</div><div class="delta">${fmt.pct(rand(-.06,.08))}</div></div>
+      ${barSVG(fc,[],{w:520,h:160})}
+      <div class="chips">${chip("Reorder @ "+fmt.int(p.reorderPoint))} ${chip("Stock "+fmt.int(p.stock))}</div>
+    </div>`
+  }).join("");
+  root.appendChild(grid);
+}
+
+function renderAlerts(root){
+  const head = document.createElement('div'); head.className="toolbar";
+  head.innerHTML = `<div><h2 class="section-title">🚨 Alerts & Tasks</h2>
+  <div class="muted">Operational queue</div></div>
+  <div class="chips">${chip("SLA 2h")} ${chip("Playbooks")}</div>`;
+  root.appendChild(head);
+
+  const list = document.createElement('div'); list.className="grid cols-3";
+  list.innerHTML = DB.alerts.map(a=>`
+    <div class="card">
+      <div class="row"><span class="pill severity-${a.severity}">${a.severity.toUpperCase()}</span>
+      <div>${a.text}</div></div>
+      <div class="divider"></div>
+      <button class="btn secondary" onclick="ack(${a.id})">Acknowledge</button>
+    </div>
+  `).join("");
+  root.appendChild(list);
+
+  const tasks = document.createElement('div'); tasks.className="card";
+  tasks.innerHTML = `
+    <h3>Tasks</h3>
+    <div class="row">
+      ${DB.tasks.map(t=> `<label class="chip"><input type="checkbox" ${t.done?"checked":""} onchange="toggleTask(${t.id})"> ${t.txt}</label>`).join("")}
+    </div>
+  `;
+  root.appendChild(tasks);
+}
+
+function renderSettings(root){
+  const c = document.createElement('div'); c.className="grid cols-3";
+  c.innerHTML = `
+    <div class="card">
+      <h3>Brand</h3>
+      <div class="chips">${chip("Aurelo Data")} ${chip("Microknots")}</div>
+      <div class="divider"></div>
+      <button class="btn secondary" onclick="location.hash='#overview'">Back to Overview</button>
+    </div>
+    <div class="card">
+      <h3>Integrations</h3>
+      <div class="chips">${chip("POS: Clover")} ${chip("ERP: NetSuite")} ${chip("Retail Media")}</div>
+    </div>
+    <div class="card">
+      <h3>Explainability</h3>
+      <p class="muted">Price engine uses SHAP to summarize top drivers per SKU: competitor index, margin floor, elasticity, MAP.</p>
+    </div>
+  `;
+  root.appendChild(c);
+}
+
+/* Actions */
+function approve(sku){
+  const p = DB.products.find(x=>x.sku===sku); if(!p) return;
+  p.price = p.recPrice; toast(`Approved new price for ${sku}`);
+}
+function bulkApprove(){
+  const recs = DB.products.filter(p=> Math.abs((p.recPrice-p.price)/p.price) >= 0.05 );
+  recs.forEach(p=> p.price = p.recPrice );
+  toast(`Approved ${recs.length} price updates`);
+  navigate();
+}
+function reserve(sku){ toast(`Reserved stock for ${sku}`) }
+function genPO(){ toast("PO generated for low-stock items") }
+function openContract(s){ toast(`Opening contract: ${s}`) }
+function ack(id){ DB.alerts = DB.alerts.filter(a=>a.id!==id); toast("Alert acknowledged"); navigate(); }
+function toggleTask(id){ const t=DB.tasks.find(x=>x.id===id); if(t){ t.done=!t.done; } }
+
+/* Init */
+navigate();
+</script>
 </body>
 </html>
+
