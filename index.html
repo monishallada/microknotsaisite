@@ -1,795 +1,652 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurelo - Grocery Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .search-container {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 2rem;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            color: white;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #00ff88;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-        }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .date-picker, .export-btn, .theme-toggle {
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .date-picker:focus, .export-btn:hover, .theme-toggle:hover {
-            border-color: #00ff88;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-        }
-
-        /* Navigation Tabs */
-        .nav-tabs {
-            background: #111;
-            padding: 0 2rem;
-            border-bottom: 1px solid #333;
-            overflow-x: auto;
-        }
-
-        .nav-container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .nav-tab {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            font-weight: 500;
-        }
-
-        .nav-tab:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-tab.active {
-            border-bottom-color: #00ff88;
-            color: #00ff88;
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Cards */
-        .card {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #00ff88;
-        }
-
-        /* KPI Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .kpi-card {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #00ff88, #00ccff);
-        }
-
-        .kpi-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #00ff88;
-            margin-bottom: 0.5rem;
-        }
-
-        .kpi-label {
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-
-        .kpi-change {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .kpi-change.positive { color: #00ff88; }
-        .kpi-change.negative { color: #ff4757; }
-
-        /* Charts */
-        .chart-container {
-            height: 300px;
-            margin: 1rem 0;
-            position: relative;
-        }
-
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 2rem;
-        }
-
-        /* Heat Map */
-        .heatmap {
-            display: grid;
-            grid-template-columns: repeat(24, 1fr);
-            gap: 2px;
-            margin: 1rem 0;
-        }
-
-        .heat-cell {
-            aspect-ratio: 1;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .heat-cell:hover {
-            transform: scale(1.1);
-        }
-
-        /* Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .data-table th {
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            font-weight: 600;
-        }
-
-        .data-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #00ff88, #00ccff);
-            color: #000;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-danger {
-            background: #ff4757;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Filters */
-        .filter-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-select {
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
-            font-size: 0.85rem;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border-left: 4px solid;
-        }
-
-        .alert-critical {
-            background: rgba(255, 71, 87, 0.1);
-            border-left-color: #ff4757;
-        }
-
-        .alert-warning {
-            background: rgba(255, 165, 0, 0.1);
-            border-left-color: #ffa500;
-        }
-
-        .alert-info {
-            background: rgba(0, 204, 255, 0.1);
-            border-left-color: #00ccff;
-        }
-
-        /* Progress bars */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff88, #00ccff);
-            transition: width 0.3s ease;
-        }
-
-        /* Status badges */
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-success { background: #00ff88; color: #000; }
-        .badge-warning { background: #ffa500; color: #000; }
-        .badge-danger { background: #ff4757; color: white; }
-        .badge-info { background: #00ccff; color: #000; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .search-container {
-                max-width: 100%;
-                margin: 0;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-        }
-
-        /* Animation keyframes */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aurelo Data — Grocery Store Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0b12;--panel:#121223;--hover:#171732;--text:#f7f7ff;--sub:#b8b8ce;
+    --brand:#7c4dff;--brand2:#a78bfa;--chip:#22223f;--border:#2a2a4a;
+    --accent:#22c55e;--warn:#f59e0b;--bad:#ef4444;--good:#22c55e; --radius:16px
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:linear-gradient(180deg,#0a0a13,#0c0c18);color:var(--text);
+       font:14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial}
+  a{color:inherit;text-decoration:none}
+  .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+  .sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:var(--panel);
+           border-right:1px solid var(--border);padding:18px}
+  .brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+  .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+        background:radial-gradient(90px 90px at 30% 30%, var(--brand) 0%, #3b1f8f 50%, #111 100%);
+        font-weight:800;box-shadow:inset 0 0 36px rgba(124,77,255,.35)}
+  .brand h1{margin:0;font-size:16px} .brand small{color:var(--sub)}
+  .nav{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .nav a{padding:10px 12px;border-radius:12px;display:flex;gap:10px;align-items:center}
+  .nav a:hover{background:var(--hover)} .nav a.active{outline:1px solid var(--brand)}
+  .tag{margin-left:auto;font-size:11px;background:var(--chip);padding:2px 8px;border-radius:999px;color:var(--sub);border:1px solid var(--border)}
+  .main{display:flex;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:3;background:rgba(12,12,24,.7);backdrop-filter:blur(10px);
+          border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{flex:1;display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
+  .search input{flex:1;background:transparent;border:0;color:var(--text);outline:0}
+  .btn{background:linear-gradient(180deg,var(--brand),#5c35ff);border:0;color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600}
+  .btn.secondary{background:var(--chip);border:1px solid var(--border)}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--sub);font-weight:500}
+  .range{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 8px;color:var(--sub)}
+  .content{padding:20px;display:grid;gap:14px}
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(4,minmax(0,1fr))} .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{background:linear-gradient(180deg,rgba(124,77,255,.06),transparent 30%),var(--panel);
+        border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+  .card h3{margin:0 0 8px;font-size:14px;color:var(--sub);letter-spacing:.3px}
+  .kpi{display:flex;align-items:flex-end;justify-content:space-between}
+  .kpi .value{font-size:28px;font-weight:800}
+  .delta{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--sub)}
+  .delta.good{color:var(--good)} .delta.bad{color:var(--bad)}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--sub);position:sticky;top:0;background:var(--panel)}
+  tr:hover td{background:rgba(124,77,255,.06)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap} .chip{background:var(--chip);border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:var(--sub);font-size:12px}
+  .pill{padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--chip);font-size:11px;color:var(--sub)}
+  .severity-high{background:#ef4444;color:#fff;border:0}
+  .severity-med{background:#f59e0b;color:#111;border:0}
+  .severity-low{background:#22c55e;color:#07130c;border:0}
+  .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .section-title{font-size:18px;margin:0 0 6px}
+  .hidden{display:none !important}
+  /* Responsive */
+  @media (max-width:1100px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .app{grid-template-columns:92px 1fr} .nav .txt{display:none} .brand small{display:none}}
+  @media (max-width:720px){ .g3,.g4{grid-template-columns:1fr} .app{grid-template-columns:1fr} .sidebar{position:static;height:auto}}
+  /* Section switcher (works even without JS) */
+  section.view{display:none} section.view.active{display:block}
+</style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">AURELO</div>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search SKUs, suppliers, customers..." id="globalSearch">
-                <span class="search-icon">🔍</span>
-            </div>
-            <div class="header-controls">
-                <input type="date" class="date-picker" id="dateRange" value="2024-01-15">
-                <button class="export-btn" onclick="exportData()">📊 Export CSV</button>
-                <button class="theme-toggle" onclick="toggleTheme()">🌙 Theme</button>
-            </div>
-        </div>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">AD</div>
+      <div>
+        <h1>Aurelo Data</h1>
+        <small>Grocery OS — Store #204 · Raleigh, NC</small>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <a href="#overview" data-route="overview" class="active"><span>📊</span> <span class="txt">Overview</span></a>
+      <a href="#prices" data-route="prices"><span>🏷️</span> <span class="txt">Prices</span> <span class="tag" id="priceBadge">—</span></a>
+      <a href="#inventory" data-route="inventory"><span>📦</span> <span class="txt">Inventory</span></a>
+      <a href="#suppliers" data-route="suppliers"><span>🤝</span> <span class="txt">Suppliers</span></a>
+      <a href="#customers" data-route="customers"><span>🧑‍🤝‍🧑</span> <span class="txt">Customers</span></a>
+      <a href="#promotions" data-route="promotions"><span>🎯</span> <span class="txt">Promotions</span></a>
+      <a href="#forecast" data-route="forecast"><span>📈</span> <span class="txt">Forecast</span></a>
+      <a href="#alerts" data-route="alerts"><span>🚨</span> <span class="txt">Alerts & Tasks</span> <span class="tag" id="alertBadge">—</span></a>
+      <a href="#settings" data-route="settings"><span>⚙️</span> <span class="txt">Settings</span></a>
+    </nav>
+    <div class="chips" style="margin-top:12px">
+      <span class="chip">Realtime POS</span>
+      <span class="chip">Pricing Engine</span>
+      <span class="chip">Juniper Forecast v2</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div class="search">
+        <span>🔎</span>
+        <input id="searchInput" placeholder="Search products, SKUs, suppliers, customers…" />
+      </div>
+      <div class="range">
+        <span>📅</span>
+        <select id="rangeSelect">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </div>
+      <button class="btn secondary" id="exportBtn">Export CSV</button>
+      <button class="btn ghost" id="themeBtn">🌗 Theme</button>
     </header>
 
-    <nav class="nav-tabs">
-        <div class="nav-container">
-            <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
-            <div class="nav-tab" onclick="showTab('prices')">Prices</div>
-            <div class="nav-tab" onclick="showTab('inventory')">Inventory</div>
-            <div class="nav-tab" onclick="showTab('suppliers')">Suppliers</div>
-            <div class="nav-tab" onclick="showTab('customers')">Customers</div>
-            <div class="nav-tab" onclick="showTab('promotions')">Promotions</div>
-            <div class="nav-tab" onclick="showTab('forecast')">Forecast</div>
-            <div class="nav-tab" onclick="showTab('alerts')">Alerts & Tasks</div>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        <!-- Overview Tab -->
-        <div id="overview" class="tab-content active fade-in">
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-value">$1.2M</div>
-                    <div class="kpi-label">Daily Revenue</div>
-                    <div class="kpi-change positive">↗ +5.3%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">847</div>
-                    <div class="kpi-label">Transactions</div>
-                    <div class="kpi-change positive">↗ +2.1%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">$142</div>
-                    <div class="kpi-label">Avg Basket Size</div>
-                    <div class="kpi-change positive">↗ +3.2%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">94.2%</div>
-                    <div class="kpi-label">In-Stock Rate</div>
-                    <div class="kpi-change negative">↘ -1.1%</div>
-                </div>
+    <section class="content">
+      <!-- OVERVIEW (Dashboard) -->
+      <section id="overview" class="view active">
+        <div class="toolbar">
+          <div>
+            <h2 class="section-title">📊 Store Overview</h2>
+            <div class="chips">
+              <span class="chip">POS: Online</span>
+              <span class="chip">Inventory: Synced</span>
+              <span class="chip">Pricing: Ready</span>
             </div>
-
-            <div class="chart-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Sales Trends</h3>
-                    </div>
-                    <div class="chart-container">
-                        <svg width="100%" height="100%" viewBox="0 0 500 250">
-                            <defs>
-                                <linearGradient id="salesGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.8"/>
-                                    <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0.1"/>
-                                </linearGradient>
-                            </defs>
-                            <polyline fill="none" stroke="#00ff88" stroke-width="3" points="50,200 100,180 150,160 200,140 250,120 300,100 350,90 400,80 450,70"/>
-                            <polygon fill="url(#salesGradient)" points="50,250 50,200 100,180 150,160 200,140 250,120 300,100 350,90 400,80 450,70 450,250"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Category Performance</h3>
-                    </div>
-                    <div class="chart-container">
-                        <svg width="100%" height="100%" viewBox="0 0 500 250">
-                            <rect x="50" y="200" width="60" height="40" fill="#00ff88" rx="4"/>
-                            <rect x="130" y="150" width="60" height="90" fill="#00ccff" rx="4"/>
-                            <rect x="210" y="180" width="60" height="60" fill="#ffa500" rx="4"/>
-                            <rect x="290" y="120" width="60" height="120" fill="#ff4757" rx="4"/>
-                            <rect x="370" y="170" width="60" height="70" fill="#9c88ff" rx="4"/>
-                            <text x="80" y="260" fill="white" text-anchor="middle" font-size="12">Produce</text>
-                            <text x="160" y="260" fill="white" text-anchor="middle" font-size="12">Dairy</text>
-                            <text x="240" y="260" fill="white" text-anchor="middle" font-size="12">Meat</text>
-                            <text x="320" y="260" fill="white" text-anchor="middle" font-size="12">Bakery</text>
-                            <text x="400" y="260" fill="white" text-anchor="middle" font-size="12">Frozen</text>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Hourly Traffic Heat Map</h3>
-                </div>
-                <div class="heatmap" id="heatmap">
-                    <!-- Generated by JavaScript -->
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Live Alerts Preview</h3>
-                </div>
-                <div class="alert alert-critical">
-                    <strong>Critical:</strong> Organic Bananas stock level below safety threshold (12 units remaining)
-                </div>
-                <div class="alert alert-warning">
-                    <strong>Warning:</strong> Supplier ABC Foods delivery delayed by 2 hours
-                </div>
-                <div class="alert alert-info">
-                    <strong>Info:</strong> Weekend promotion for Dairy category showing 15% lift
-                </div>
-            </div>
+          </div>
+          <div class="chips">
+            <span class="chip">Store #204</span>
+            <span class="chip" id="today"></span>
+          </div>
         </div>
 
-        <!-- Prices Tab -->
-        <div id="prices" class="tab-content">
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <label>Category:</label>
-                    <select class="filter-select">
-                        <option>All Categories</option>
-                        <option>Produce</option>
-                        <option>Dairy</option>
-                        <option>Meat</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Price Range:</label>
-                    <select class="filter-select">
-                        <option>All Ranges</option>
-                        <option>$0-$5</option>
-                        <option>$5-$20</option>
-                        <option>$20+</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="bulkApprove()">Bulk Approve Recommendations</button>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Price Elasticity & Competitor Analysis</h3>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>SKU</th>
-                            <th>Current Price</th>
-                            <th>Elasticity</th>
-                            <th>Competitor Avg</th>
-                            <th>Recommended</th>
-                            <th>Est. Impact</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Organic Milk 1L</td>
-                            <td>$4.99</td>
-                            <td>-1.2</td>
-                            <td>$5.25</td>
-                            <td class="kpi-change positive">$5.15</td>
-                            <td>+$127/day</td>
-                            <td><button class="btn btn-primary btn-sm">Apply</button></td>
-                        </tr>
-                        <tr>
-                            <td>Premium Bread</td>
-                            <td>$3.49</td>
-                            <td>-0.8</td>
-                            <td>$3.29</td>
-                            <td class="kpi-change negative">$3.35</td>
-                            <td>-$45/day</td>
-                            <td><button class="btn btn-secondary btn-sm">Review</button></td>
-                        </tr>
-                        <tr>
-                            <td>Bananas /lb</td>
-                            <td>$1.89</td>
-                            <td>-1.5</td>
-                            <td>$1.99</td>
-                            <td class="kpi-change positive">$1.95</td>
-                            <td>+$89/day</td>
-                            <td><button class="btn btn-primary btn-sm">Apply</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="grid g4">
+          <div class="card"><h3>Revenue (MTD)</h3><div class="kpi"><div class="value" id="revKpi">$238,420.88</div><div class="delta good">+6.4% vs prev</div></div></div>
+          <div class="card"><h3>Units Sold</h3><div class="kpi"><div class="value" id="unitsKpi">58,412</div><div class="delta">+1.9%</div></div></div>
+          <div class="card"><h3>Avg Basket</h3><div class="kpi"><div class="value" id="abKpi">$47.20</div><div class="delta good">+2.3%</div></div></div>
+          <div class="card"><h3>Gross Margin</h3><div class="kpi"><div class="value" id="gmKpi">29.8%</div><div class="delta good">+0.6pp</div></div></div>
         </div>
 
-        <!-- Inventory Tab -->
-        <div id="inventory" class="tab-content">
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-value">23</div>
-                    <div class="kpi-label">Low Stock Items</div>
-                    <div class="kpi-change negative">↗ +5 from yesterday</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">4.2</div>
-                    <div class="kpi-label">Avg Days of Supply</div>
-                    <div class="kpi-change positive">↗ +0.3 days</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">2.1%</div>
-                    <div class="kpi-label">Waste Rate</div>
-                    <div class="kpi-change positive">↘ -0.3%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">$2.3M</div>
-                    <div class="kpi-label">Total Inventory Value</div>
-                    <div class="kpi-change positive">↗ +1.2%</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Inventory Management</h3>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>SKU</th>
-                            <th>Current Stock</th>
-                            <th>Days of Supply</th>
-                            <th>Waste %</th>
-                            <th>Status</th>
-                            <th>Quick Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Organic Bananas</td>
-                            <td>12 units</td>
-                            <td>0.5</td>
-                            <td>5.2%</td>
-                            <td><span class="badge badge-danger">Critical</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-secondary" onclick="reserveStock('bananas')">Reserve</button>
-                                <button class="btn btn-sm btn-primary" onclick="generatePO('bananas')">Generate PO</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Greek Yogurt</td>
-                            <td>45 units</td>
-                            <td>2.1</td>
-                            <td>1.8%</td>
-                            <td><span class="badge badge-warning">Low</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-secondary" onclick="reserveStock('yogurt')">Reserve</button>
-                                <button class="btn btn-sm btn-primary" onclick="generatePO('yogurt')">Generate PO</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Chicken Breast</td>
-                            <td>78 units</td>
-                            <td>3.2</td>
-                            <td>0.9%</td>
-                            <td><span class="badge badge-success">Healthy</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-secondary" onclick="reserveStock('chicken')">Reserve</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="grid g3">
+          <div class="card">
+            <h3>Sales by Department (Last 30d)</h3>
+            <table>
+              <thead><tr><th>Department</th><th>Revenue</th><th>Units</th><th>Share</th></tr></thead>
+              <tbody id="deptTable">
+                <tr><td>Produce</td><td>$38,920</td><td>9,812</td><td>16.3%</td></tr>
+                <tr><td>Dairy</td><td>$31,440</td><td>7,102</td><td>13.2%</td></tr>
+                <tr><td>Bakery</td><td>$21,980</td><td>3,640</td><td>9.2%</td></tr>
+                <tr><td>Meat</td><td>$44,310</td><td>5,145</td><td>18.6%</td></tr>
+                <tr><td>Pantry</td><td>$29,115</td><td>8,114</td><td>12.2%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Top 10 SKUs by Revenue</h3>
+            <table>
+              <thead><tr><th>SKU</th><th>Product</th><th>Dept</th><th>Revenue</th><th>Margin%</th></tr></thead>
+              <tbody id="topSkuTable">
+                <tr><td>SKU-100021</td><td>Salmon Fillet</td><td>Seafood</td><td>$7,420</td><td>28%</td></tr>
+                <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>$6,780</td><td>22%</td></tr>
+                <tr><td>SKU-100003</td><td>Gala Apples</td><td>Produce</td><td>$6,310</td><td>31%</td></tr>
+                <tr><td>SKU-100089</td><td>Olive Oil</td><td>Pantry</td><td>$5,990</td><td>33%</td></tr>
+                <tr><td>SKU-100117</td><td>Ground Beef</td><td>Meat</td><td>$5,800</td><td>26%</td></tr>
+                <tr><td>SKU-100064</td><td>Cold Brew</td><td>Beverages</td><td>$5,610</td><td>37%</td></tr>
+                <tr><td>SKU-100133</td><td>Paper Towels</td><td>Household</td><td>$5,420</td><td>24%</td></tr>
+                <tr><td>SKU-100071</td><td>Ice Cream</td><td>Frozen</td><td>$5,210</td><td>34%</td></tr>
+                <tr><td>SKU-100052</td><td>Chicken Breast</td><td>Meat</td><td>$5,040</td><td>25%</td></tr>
+                <tr><td>SKU-100015</td><td>Bananas</td><td>Produce</td><td>$4,990</td><td>28%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Operational Highlights</h3>
+            <ul>
+              <li>🔼 Peak hour today expected 5–7pm; schedule +1 cashier.</li>
+              <li>🧊 Frozen inventory days-of-supply: <b>12.4</b> (healthy).</li>
+              <li>🥛 Whole Milk 1G priced 6–9% above competitor; see <a href="#prices">Price Recs</a>.</li>
+              <li>🍎 Produce waste trending down (-0.6pp WoW).</li>
+            </ul>
+          </div>
         </div>
 
-        <!-- Suppliers Tab -->
-        <div id="suppliers" class="tab-content">
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-value">94.5%</div>
-                    <div class="kpi-label">On-Time Delivery</div>
-                    <div class="kpi-change positive">↗ +2.1%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">97.8%</div>
-                    <div class="kpi-label">Fill Rate</div>
-                    <div class="kpi-change positive">↗ +0.5%</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">2.3</div>
-                    <div class="kpi-label">Avg Lead Time (days)</div>
-                    <div class="kpi-change positive">↘ -0.2</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-value">8.7/10</div>
-                    <div class="kpi-label">Avg Supplier Score</div>
-                    <div class="kpi-change positive">↗ +0.3</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Supplier Performance</h3>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Supplier</th>
-                            <th>On-Time %</th>
-                            <th>Fill Rate %</th>
-                            <th>Lead Time</th>
-                            <th>Revenue</th>
-                            <th>Score</th>
-                            <th>Contract</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ABC Fresh Foods</td>
-                            <td>98.2%</td>
-                            <td>99.1%</td>
-                            <td>1.8 days</td>
-                            <td>$450K</td>
-                            <td>9.2/10</td>
-                            <td><span class="badge badge-success">Active</span></td>
-                            <td><button class="btn btn-sm btn-secondary">Renew</button></td>
-                        </tr>
-                        <tr>
-                            <td>Metro Dairy Corp</td>
-                            <td>89.5%</td>
-                            <td>95.8%</td>
-                            <td>2.8 days</td>
-                            <td>$320K</td>
-                            <td>7.8/10</td>
-                            <td><span class="badge badge-warning">Expires Soon</span></td>
-                            <td><button class="btn btn-sm btn-primary">Negotiate</button></td>
-                        </tr>
-                        <tr>
-                            <td>Quality Meats Inc</td>
-                            <td>95.1%</td>
-                            <td>98.9%</td>
-                            <td>2.1 days</td>
-                            <td>$280K</td>
-                            <td>8.9/10</td>
-                            <td><span class="badge badge-success">Active</span></td>
-                            <td><button class="btn btn-sm btn-secondary">Review</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="card">
+          <h3>Price Opportunities (Preview)</h3>
+          <table id="overviewPriceTable">
+            <thead><tr><th>SKU</th><th>Product</th><th>Current</th><th>Competitor</th><th>Recommended</th><th>Δ</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>SKU-100044</td><td>Whole Milk</td><td>$3.89</td><td>$3.59</td><td><b>$3.69</b></td><td><span class="pill severity-med">-5.1%</span></td><td><button class="btn secondary">Approve</button></td></tr>
+              <tr><td>SKU-100089</td><td>Olive Oil</td><td>$10.99</td><td>$11.49</td><td><b>$11.29</b></td><td><span class="pill severity-low">+2.7%</span></td><td><button class="btn secondary">Approve</button></td></tr>
+              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>$1.99</td><td>$1.79</td><td><b>$1.89</b></td><td><span class="pill severity-med">-5.0%</span></td><td><button class="btn secondary">Approve</button></td></tr>
+            </tbody>
+          </table>
         </div>
 
-        <!-- Customers Tab -->
-        <div id="customers" class="tab-content">
-            <div class="chart-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Customer Segments</h3>
+        <div class="grid g3">
+          <div class="card">
+            <h3>Open Alerts</h3>
+            <ul id="alertList">
+              <li><span class="pill severity-high">HIGH</span> Out-of-stock risk: Gala Apples &lt; 1 day of supply</li>
+              <li><span class="pill severity-med">MED</span> Price anomaly: Whole Milk 1G +9% vs comp</li>
+              <li><span class="pill severity-low">LOW</span> GreenFields on-time rate 96% ↑</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Tasks</h3>
+            <label class="chip"><input type="checkbox"> Approve 12 price recommendations</label>
+            <label class="chip"><input type="checkbox"> Send PO to Vista Produce</label>
+            <label class="chip"><input type="checkbox"> Schedule Weekend BOGO — Snacks</label>
+          </div>
+          <div class="card">
+            <h3>Quick Actions</h3>
+            <div class="chips">
+              <button class="btn secondary" onclick="location.hash='#prices'">Review Prices</button>
+              <button class="btn secondary" onclick="location.hash='#inventory'">Generate PO</button>
+              <button class="btn secondary" onclick="location.hash='#promotions'">New Promo</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICES -->
+      <section id="prices" class="view">
+        <div class="toolbar">
+          <div>
+            <h2 class="section-title">🏷️ Price Recommendations</h2>
+            <div class="chips">
+              <span class="chip">Elasticity-aware</span><span class="chip">Competitor indexed</span><span class="chip">MAP safe</span>
+            </div>
+          </div>
+          <div class="chips">
+            <label class="chip">Dept:
+              <select id="deptFilter">
+                <option value="">All</option>
+                <option>Produce</option><option>Dairy</option><option>Bakery</option><option>Meat</option><option>Pantry</option><option>Seafood</option><option>Frozen</option><option>Beverages</option><option>Snacks</option><option>Household</option>
+              </select>
+            </label>
+            <label class="chip">Δ threshold:
+              <select id="deltaFilter">
+                <option value="0">All</option><option value="0.02">2%+</option><option value="0.05" selected>5%+</option><option value="0.08">8%+</option>
+              </select>
+            </label>
+            <button class="btn" id="approveAllBtn">Approve All</button>
+          </div>
+        </div>
+        <div class="card" style="overflow:auto;max-height:64vh">
+          <table id="priceTable">
+            <thead><tr><th>SKU</th><th>Product</th><th>Dept</th><th>Supplier</th><th>Unit Cost</th><th>Current</th><th>Competitor</th><th>Recommended</th><th>Δ</th><th>Margin%</th><th>DOS</th><th>Risk</th><th>Action</th></tr></thead>
+            <tbody>
+              <!-- Rows injected by JS; static seed rows to ensure content is visible -->
+              <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>SunDairy</td><td>$2.85</td><td>$3.89</td><td>$3.59</td><td><b>$3.69</b></td><td><span class="pill severity-med">-5.1%</span></td><td>27%</td><td>7.2</td><td><span class="pill severity-low">Normal</span></td><td><button class="btn secondary">Approve</button></td></tr>
+              <tr><td>SKU-100089</td><td>Olive Oil</td><td>Pantry</td><td>Marco Imports</td><td>$7.58</td><td>$10.99</td><td>$11.49</td><td><b>$11.29</b></td><td><span class="pill severity-low">+2.7%</span></td><td>33%</td><td>18.3</td><td><span class="pill severity-low">Normal</span></td><td><button class="btn secondary">Approve</button></td></tr>
+              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>Produce</td><td>GreenFields</td><td>$1.38</td><td>$1.99</td><td>$1.79</td><td><b>$1.89</b></td><td><span class="pill severity-med">-5.0%</span></td><td>31%</td><td>0.9</td><td><span class="pill severity-med">Low Stock</span></td><td><button class="btn secondary">Approve</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- INVENTORY -->
+      <section id="inventory" class="view">
+        <div class="toolbar">
+          <div>
+            <h2 class="section-title">📦 Inventory</h2>
+            <div class="chips"><span class="chip">Cycle Count</span><span class="chip">FIFO</span></div>
+          </div>
+          <button class="btn secondary" id="genPoBtn">Generate PO</button>
+        </div>
+        <div class="card" style="overflow:auto;max-height:64vh">
+          <table id="invTable">
+            <thead><tr><th>SKU</th><th>Name</th><th>Dept</th><th>Stock</th><th>Reorder</th><th>DOS</th><th>Waste%</th><th>Supplier</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>Produce</td><td>18</td><td>25</td><td>0.9</td><td>2.8%</td><td>GreenFields</td><td><button class="btn secondary">Reserve</button></td></tr>
+              <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>112</td><td>40</td><td>6.2</td><td>0.9%</td><td>SunDairy</td><td><button class="btn secondary">Reserve</button></td></tr>
+              <tr><td>SKU-100117</td><td>Ground Beef</td><td>Meat</td><td>54</td><td>30</td><td>3.4</td><td>1.1%</td><td>PrimeButchers</td><td><button class="btn secondary">Reserve</button></td></tr>
+              <tr><td>SKU-100064</td><td>Cold Brew</td><td>Beverages</td><td>140</td><td>35</td><td>8.9</td><td>0.2%</td><td>BlueRiver</td><td><button class="btn secondary">Reserve</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SUPPLIERS -->
+      <section id="suppliers" class="view">
+        <div class="toolbar">
+          <div>
+            <h2 class="section-title">🤝 Supplier Performance</h2>
+            <div class="chips"><span class="chip">SLA 95%</span><span class="chip">Auto-PO</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <table id="supTable">
+            <thead><tr><th>Supplier</th><th>Items</th><th>Revenue</th><th>On-time</th><th>Fill</th><th>Lead (d)</th><th>Score</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>GreenFields</td><td>38</td><td>$62,340</td><td>96.2%</td><td>97.1%</td><td>3.1</td><td><span class="pill severity-low">92%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
+              <tr><td>SunDairy</td><td>22</td><td>$31,880</td><td>94.8%</td><td>95.4%</td><td>2.9</td><td><span class="pill">88%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
+              <tr><td>PrimeButchers</td><td>19</td><td>$28,410</td><td>93.3%</td><td>96.8%</td><td>4.0</td><td><span class="pill">86%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section id="customers" class="view">
+        <div class="toolbar">
+          <div>
+            <h2 class="section-title">🧑‍🤝‍🧑 Customers & Cohorts</h2>
+            <div class="chips"><span class="chip">Loyalty</span><span class="chip">CLV</span><span class="chip">RFM</span></div>
+          </div>
+        </div>
+        <div class="grid g3">
+          <div class="card"><h3>Budget Families</h3><div class="kpi"><div class="value">34%</div><div class="delta">+1.2%</div></div><div class="chips"><span class="chip">Avg Basket $42.1</span><span class="chip">Freq 1.3/wk</span><span class="chip">Churn 8.5%</span></div></div>
+          <div class="card"><h3>Health Conscious</h3><div class="kpi"><div class="value">18%</div><div class="delta">-0.8%</div></div><div class="chips"><span class="chip">Avg Basket $31.9</span><span class="chip">Freq 1.1/wk</span><span class="chip">Churn 6.1%</span></div></div>
+          <div class="card"><h3>Loyalists</h3><div class="kpi"><div class="value">16%</div><div class="delta good">+0.6%</div></div><div class="chips"><span class="chip">Avg Basket $48.2</span><span class="chip">Freq 1.7/wk</span><span class="chip">Churn 3.8%</span></div></div>
+        </div>
+        <div class="card">
+          <h3>Basket Lift — Cross-sell Pairs</h3>
+          <table>
+            <thead><tr><th>Anchor</th><th>Pair</th><th>Support</th><th>Confidence</th><th>Lift</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Chicken Breast</td><td>Olive Oil</td><td>12.4%</td><td>63.1%</td><td>1.42×</td><td><button class="btn secondary">Create Promo</button></td></tr>
+              <tr><td>Cold Brew</td><td>Chocolate Bar</td><td>8.8%</td><td>51.3%</td><td>1.25×</td><td><button class="btn secondary">Create Promo</button></td></tr>
+              <tr><td>Bananas</td><td>Greek Yogurt</td><td>10.6%</td><td>59.7%</td><td>1.36×</td><td><button class="btn secondary">Create Promo</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROMOTIONS -->
+      <section id="promotions" class="view">
+        <div class="toolbar">
+          <div><h2 class="section-title">🎯 Promotions</h2><div class="chips"><span class="chip">BOGO</span><span class="chip">Mix & Match</span><span class="chip">Endcap</span></div></div>
+          <button class="btn secondary" onclick="alert('New promo wizard')">New Promotion</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Experiment</th><th>Lift A</th><th>Lift B</th><th>Significance</th><th>Cannibalization</th><th>Decision</th></tr></thead>
+            <tbody>
+              <tr><td>#101 BOGO Snacks</td><td>+6.8%</td><td>+9.4%</td><td>95%</td><td>+1.1%</td><td><button class="btn secondary">Roll B</button></td></tr>
+              <tr><td>#102 Milk Discount</td><td>+3.1%</td><td>+2.2%</td><td>88%</td><td>+0.6%</td><td><button class="btn secondary">Roll A</button></td></tr>
+              <tr><td>#103 Produce Bundle</td><td>+5.2%</td><td>+6.0%</td><td>92%</td><td>+0.3%</td><td><button class="btn secondary">Roll B</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- FORECAST -->
+      <section id="forecast" class="view">
+        <div class="toolbar">
+          <div><h2 class="section-title">📈 Demand Forecast (7-day)</h2><div class="chips"><span class="chip">Holt-Winters</span><span class="chip">Holiday adj.</span><span class="chip">Weather</span></div></div>
+        </div>
+        <div class="grid g3" id="fcGrid">
+          <div class="card"><h3>Salmon Fillet <span class="pill">SKU-100021</span></h3><div class="kpi"><div class="value">132 u</div><div class="delta">+2.1%</div></div><div class="chips"><span class="chip">Reorder @ 30</span><span class="chip">Stock 54</span></div></div>
+          <div class="card"><h3>Whole Milk <span class="pill">SKU-100044</span></h3><div class="kpi"><div class="value">248 u</div><div class="delta">-1.5%</div></div><div class="chips"><span class="chip">Reorder @ 40</span><span class="chip">Stock 112</span></div></div>
+          <div class="card"><h3>Gala Apples <span class="pill">SKU-100003</span></h3><div class="kpi"><div class="value">96 u</div><div class="delta">+3.2%</div></div><div class="chips"><span class="chip">Reorder @ 25</span><span class="chip">Stock 18</span></div></div>
+        </div>
+      </section>
+
+      <!-- ALERTS -->
+      <section id="alerts" class="view">
+        <div class="toolbar">
+          <div><h2 class="section-title">🚨 Alerts & Tasks</h2><div class="chips"><span class="chip">SLA 2h</span><span class="chip">Playbooks</span></div></div>
+        </div>
+        <div class="grid g3">
+          <div class="card"><h3>Alert</h3><p><span class="pill severity-high">HIGH</span> Out-of-stock risk: Gala Apples &lt; 1 DoS</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
+          <div class="card"><h3>Alert</h3><p><span class="pill severity-med">MED</span> Price anomaly: Whole Milk 1G +9% vs comp</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
+          <div class="card"><h3>Alert</h3><p><span class="pill severity-low">LOW</span> Supplier GreenFields on-time 96% ↑</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
+        </div>
+        <div class="card">
+          <h3>Tasks</h3>
+          <label class="chip"><input type="checkbox"> Approve 12 price recommendations</label>
+          <label class="chip"><input type="checkbox"> Send PO to Vista Produce</label>
+          <label class="chip"><input type="checkbox"> Schedule Weekend BOGO — Snacks</label>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="settings" class="view">
+        <h2 class="section-title">⚙️ Settings</h2>
+        <div class="grid g3">
+          <div class="card"><h3>Brand</h3><div class="chips"><span class="chip">Aurelo Data</span><span class="chip">Microknots</span></div></div>
+          <div class="card"><h3>Integrations</h3><div class="chips"><span class="chip">POS: Clover</span><span class="chip">ERP: NetSuite</span><span class="chip">Retail Media</span></div></div>
+          <div class="card"><h3>Explainability</h3><p class="sub">Price engine uses SHAP to summarize drivers per SKU: competitor index, margin floor, elasticity, MAP.</p></div>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<noscript>
+  <div style="padding:12px;background:#fff;color:#000">JavaScript is off — static data is shown. Turn it on for live search, filters, and export.</div>
+</noscript>
+
+<script>
+/* ===== Basic, compatible JS (ES5) ===== */
+(function(){
+  var Departments = ["Produce","Dairy","Bakery","Meat","Seafood","Pantry","Frozen","Beverages","Snacks","Household","Personal Care","International"];
+  function rand(min,max){return Math.random()*(max-min)+min}
+  function choice(a){return a[Math.floor(Math.random()*a.length)]}
+  function money(n){return "$"+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function pct(n){var s=n>=0?"+":"";return s+(n*100).toFixed(1)+"%"}
+  function int(n){return Number(n).toLocaleString()}
+
+  /* Seed mock products so all pages can render and search/export works */
+  var DB = { products: [], alerts:[
+    {severity:"HIGH", text:"Out-of-stock risk: Gala Apples < 1 DoS"},
+    {severity:"MED", text:"Price anomaly: Whole Milk +9% vs comp"},
+    {severity:"LOW", text:"Supplier GreenFields on-time 96% ↑"}
+  ]};
+
+  function genName(dep){
+    var pool = {
+      Produce:["Gala Apples","Bananas","Baby Spinach","Roma Tomatoes","Avocados"],
+      Dairy:["Whole Milk","Greek Yogurt","Cheddar","Butter","Cottage Cheese"],
+      Bakery:["Sourdough Loaf","Blueberry Muffins","Baguette","Croissant","Whole Wheat Bread"],
+      Meat:["Chicken Breast","Ground Beef","Pork Chops","Turkey Slices","Bacon"],
+      Seafood:["Salmon Fillet","Shrimp","Tilapia","Tuna Steaks","Crab Cakes"],
+      Pantry:["Jasmine Rice","Black Beans","Olive Oil","Tomato Sauce","Pasta"],
+      Frozen:["Frozen Pizza","Mixed Veggies","Ice Cream","Waffles","Chicken Nuggets"],
+      Beverages:["Orange Juice","Cola 12pk","Cold Brew","Sparkling Water","Green Tea"],
+      Snacks:["Potato Chips","Trail Mix","Chocolate Bar","Protein Bars","Pretzels"],
+      Household:["Paper Towels","Laundry Detergent","Dish Soap","Trash Bags","Toilet Paper"]
+    }[dep] || ["Item"];
+    return pool[Math.floor(Math.random()*pool.length)];
+  }
+
+  function generateProducts(count){
+    var out=[], i;
+    for(i=0;i<count;i++){
+      var dep = choice(Departments);
+      var supplier = choice(["GreenFields","NorthOcean","SunDairy","PrimeButchers","SweetBake","BlueRiver","Vista Produce","Marco Imports","Chill&Freeze","Sparkle Home"]);
+      var unitCost = +(rand(0.4,18)).toFixed(2);
+      var margin = rand(0.18,0.42);
+      var price = +(unitCost/(1-margin)).toFixed(2);
+      var comp = +(price*rand(0.9,1.1)).toFixed(2);
+      var rec = +(comp*rand(0.97,1.03)).toFixed(2);
+      var sku = "SKU-"+(100000+i);
+      var stock = Math.floor(rand(0,300));
+      var salesUnits = Math.floor(rand(5,160));
+      var revenue = +(price*salesUnits).toFixed(2);
+      var dos = stock/Math.max(salesUnits/30,1/30);
+      var waste = +(dep==="Produce"||dep==="Bakery"?rand(0.005,0.08):rand(0.001,0.03));
+      out.push({sku:sku,name:genName(dep),department:dep,supplier:supplier,unitCost:unitCost,price:price,competitor:comp,recPrice:rec,margin:(price-unitCost)/price,stock:stock,reorderPoint:Math.floor(rand(12,40)),salesUnits:salesUnits,revenue:revenue,dos:dos,wasteRate:waste});
+    }
+    return out;
+  }
+
+  DB.products = generateProducts(180);
+
+  /* Router: show section by hash (also sets active nav) */
+  function show(route){
+    var all = document.querySelectorAll("section.view");
+    for(var i=0;i<all.length;i++){ all[i].classList.remove("active"); }
+    var el = document.getElementById(route) || document.getElementById("overview");
+    el.classList.add("active");
+
+    var nav = document.querySelectorAll(".nav a");
+    for(i=0;i<nav.length;i++){ nav[i].classList.toggle("active", nav[i].getAttribute("data-route")===route); }
+  }
+  function onHash(){ var r=(location.hash||"#overview").replace("#",""); show(r); }
+  window.addEventListener("hashchange", onHash);
+
+  /* Populate dynamic counters + today */
+  function updateBadges(){
+    var priceRecs = 0, i, p;
+    for(i=0;i<DB.products.length;i++){
+      p=DB.products[i];
+      var diff=Math.abs((p.recPrice-p.price)/p.price);
+      if(diff>0.03) priceRecs++;
+    }
+    var pb=document.getElementById("priceBadge"); if(pb) pb.textContent = priceRecs+" recs";
+    var ab=document.getElementById("alertBadge"); if(ab) ab.textContent = DB.alerts.length;
+    var td=document.getElementById("today"); if(td) td.textContent = new Date().toLocaleDateString();
+  }
+
+  /* Fill the price table (keeps seed rows if present) */
+  function renderPrices(){
+    var deptSel = document.getElementById("deptFilter");
+    var deltaSel = document.getElementById("deltaFilter");
+    if(!deptSel || !deltaSel) return;
+
+    var dept = deptSel.value || "";
+    var dth = parseFloat(deltaSel.value||"0");
+    var rows = [];
+    for(var i=0;i<DB.products.length;i++){
+      var p=DB.products[i];
+      var diff=(p.recPrice-p.price)/p.price;
+      if(dept && p.department!==dept) continue;
+      if(Math.abs(diff)<dth) continue;
+      var risk = p.stock<p.reorderPoint ? "Low Stock" : (p.wasteRate>0.06? "Waste" : "Normal");
+      rows.push(
+        "<tr>"+
+        "<td>"+p.sku+"</td><td>"+p.name+"</td><td>"+p.department+"</td><td>"+p.supplier+"</td>"+
+        "<td>"+money(p.unitCost)+"</td><td>"+money(p.price)+"</td><td>"+money(p.competitor)+"</td>"+
+        "<td><b>"+money(p.recPrice)+"</b></td>"+
+        "<td><span class='pill "+(diff>=0?"severity-low":"severity-med")+"'>"+(diff>=0?"+":"")+(diff*100).toFixed(1)+"%</span></td>"+
+        "<td>"+Math.round(p.margin*100)+"%</td><td>"+p.dos.toFixed(1)+"</td>"+
+        "<td><span class='pill'>"+risk+"</span></td>"+
+        "<td><button class='btn secondary' data-approve='"+p.sku+"'>Approve</button></td>"+
+        "</tr>"
+      );
+    }
+    var body = document.querySelector("#priceTable tbody");
+    if(body){
+      // Keep the 3 seed rows on top for guaranteed content, then add generated
+      var seed = body.querySelectorAll("tr");
+      var seedHTML = "";
+      for(var s=0;s<Math.min(seed.length,3);s++){ seedHTML += seed[s].outerHTML; }
+      body.innerHTML = seedHTML + rows.slice(0,150).join("");
+    }
+  }
+
+  /* Inventory table render */
+  function renderInventory(){
+    var body = document.querySelector("#invTable tbody"); if(!body) return;
+    var list = DB.products.slice().sort(function(a,b){return a.stock-b.stock}).slice(0,120);
+    var html="";
+    for(var i=0;i<list.length;i++){
+      var p=list[i];
+      html+= "<tr><td>"+p.sku+"</td><td>"+p.name+"</td><td>"+p.department+"</td>"+
+             "<td>"+int(p.stock)+"</td><td>"+int(p.reorderPoint)+"</td>"+
+             "<td>"+p.dos.toFixed(1)+"</td><td>"+(p.wasteRate*100).toFixed(1)+"%</td>"+
+             "<td>"+p.supplier+"</td>"+
+             "<td><button class='btn secondary' data-reserve='"+p.sku+"'>Reserve</button></td></tr>";
+    }
+    // keep the 4 seed rows, then append
+    var current = body.innerHTML;
+    body.innerHTML = current + html;
+  }
+
+  /* Export CSV of current product set */
+  function exportCSV(){
+    var cols = ["sku","name","department","supplier","unitCost","price","competitor","recPrice","margin","stock","reorderPoint","salesUnits","revenue","dos","wasteRate"];
+    var lines = [cols.join(",")];
+    for(var i=0;i<DB.products.length;i++){
+      var r = DB.products[i], row=[];
+      for(var c=0;c<cols.length;c++){ row.push(String(r[cols[c]]).replace(/,/g,"")); }
+      lines.push(row.join(","));
+    }
+    var csv = lines.join("\n");
+    var blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "aurelo-grocery.csv";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  }
+
+  /* Search filter (client side) */
+  function applySearch(){
+    var q = (document.getElementById("searchInput").value||"").toLowerCase().trim();
+    function matchRow(tr){
+      var t = tr.textContent.toLowerCase();
+      var ok = true, parts=q.split(/\s+/);
+      for(var i=0;i<parts.length;i++){ if(parts[i] && t.indexOf(parts[i])===-1){ ok=false; break; } }
+      tr.style.display = ok ? "" : "none";
+    }
+    var tables = ["#priceTable","#invTable","#supTable","#overviewPriceTable","#topSkuTable","#deptTable"];
+    for(var i=0;i<tables.length;i++){
+      var body = document.querySelector(tables[i]+" tbody") || document.querySelector(tables[i]);
+      if(!body) continue;
+      var rows = body.querySelectorAll("tr");
+      for(var r=0;r<rows.length;r++){ matchRow(rows[r]); }
+    }
+  }
+
+  /* Theme toggle */
+  function toggleTheme(){
+    var dark = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()==="#0b0b12";
+    if(dark){
+      document.documentElement.style.setProperty('--bg','#f6f7fb');
+      document.documentElement.style.setProperty('--panel','#ffffff');
+      document.documentElement.style.setProperty('--hover','#f4f4ff');
+      document.documentElement.style.setProperty('--text','#0e0e15');
+      document.documentElement.style.setProperty('--sub','#4f4f64');
+      document.documentElement.style.setProperty('--chip','#eef0ff');
+      document.documentElement.style.setProperty('--border','#dfe3ff');
+      document.body.style.background="linear-gradient(180deg,#f8f9ff,#f2f3fb)";
+    }else{
+      // revert by reloading simplest
+      location.reload();
+    }
+  }
+
+  /* Simple actions */
+  function delegateClicks(e){
+    var t = e.target;
+    if(t && t.getAttribute("data-approve")){
+      alert("Approved new price for "+t.getAttribute("data-approve"));
+    }
+    if(t && t.getAttribute("data-reserve")){
+      alert("Reserved stock for "+t.getAttribute("data-reserve"));
+    }
+  }
+  window.ackRow = function(btn){ btn.parentNode.remove(); }
+
+  /* Wire up UI */
+  function init(){
+    // Show initial hash/section
+    onHash();
+    // Badges & date
+    updateBadges();
+    // Render dynamic tables on first load
+    renderPrices();
+    renderInventory();
+
+    // Controls
+    var dept = document.getElementById("deptFilter");
+    var dth = document.getElementById("deltaFilter");
+    if(dept) dept.addEventListener("change", renderPrices);
+    if(dth) dth.addEventListener("change", renderPrices);
+
+    var exp = document.getElementById("exportBtn");
+    if(exp) exp.addEventListener("click", exportCSV);
+
+    var theme = document.getElementById("themeBtn");
+    if(theme) theme.addEventListener("click", toggleTheme);
+
+    var search = document.getElementById("searchInput");
+    if(search){
+      var t; search.addEventListener("input", function(){ clearTimeout(t); t=setTimeout(applySearch, 150); });
+    }
+
+    var genpo = document.getElementById("genPoBtn");
+    if(genpo){ genpo.addEventListener("click", function(){ alert("PO generated for low-stock items"); }); }
+
+    var approveAll = document.getElementById("approveAllBtn");
+    if(approveAll){ approveAll.addEventListener("click", function(){ alert("Approved all visible price recommendations"); }); }
+
+    document.body.addEventListener("click", delegateClicks);
+  }
+
+  // Set overview KPI numbers based on generated data
+  function updateOverviewKpis(){
+    var revenue=0, units=0, margin=0, gmDen=0, i, p;
+    for(i=0;i<DB.products.length;i++){
+      p=DB.products[i];
+      revenue += p.revenue;
+      units += p.salesUnits;
+      margin += (p.price - p.unitCost) * p.salesUnits;
+      gmDen += p.price * p.salesUnits;
+    }
+    var revK=document.getElementById("revKpi"); if(revK) revK.textContent = money(revenue);
+    var unK=document.getElementById("unitsKpi"); if(unK) unK.textContent = int(units);
+    var abK=document.getElementById("abKpi"); if(abK) abK.textContent = money(Math.max(20, revenue/Math.max(1, Math.round(units/ (rand(0.7,1.4))))));
+    var gmK=document.getElementById("gmKpi"); if(gmK) gmK.textContent = (Math.max(0, (margin/Math.max(gmDen,1))*100)).toFixed(1)+"%";
+  }
+
+  updateOverviewKpis();
+  // Ready
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
+})();
+</script>
+</body>
+</html>
