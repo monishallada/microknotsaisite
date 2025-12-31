@@ -1,652 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Aurelo Data — Grocery Store Dashboard</title>
-<style>
-  :root{
-    --bg:#0b0b12;--panel:#121223;--hover:#171732;--text:#f7f7ff;--sub:#b8b8ce;
-    --brand:#7c4dff;--brand2:#a78bfa;--chip:#22223f;--border:#2a2a4a;
-    --accent:#22c55e;--warn:#f59e0b;--bad:#ef4444;--good:#22c55e; --radius:16px
-  }
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;background:linear-gradient(180deg,#0a0a13,#0c0c18);color:var(--text);
-       font:14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial}
-  a{color:inherit;text-decoration:none}
-  .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
-  .sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:var(--panel);
-           border-right:1px solid var(--border);padding:18px}
-  .brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
-  .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
-        background:radial-gradient(90px 90px at 30% 30%, var(--brand) 0%, #3b1f8f 50%, #111 100%);
-        font-weight:800;box-shadow:inset 0 0 36px rgba(124,77,255,.35)}
-  .brand h1{margin:0;font-size:16px} .brand small{color:var(--sub)}
-  .nav{display:flex;flex-direction:column;gap:6px;margin-top:6px}
-  .nav a{padding:10px 12px;border-radius:12px;display:flex;gap:10px;align-items:center}
-  .nav a:hover{background:var(--hover)} .nav a.active{outline:1px solid var(--brand)}
-  .tag{margin-left:auto;font-size:11px;background:var(--chip);padding:2px 8px;border-radius:999px;color:var(--sub);border:1px solid var(--border)}
-  .main{display:flex;flex-direction:column}
-  .topbar{position:sticky;top:0;z-index:3;background:rgba(12,12,24,.7);backdrop-filter:blur(10px);
-          border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .search{flex:1;display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
-  .search input{flex:1;background:transparent;border:0;color:var(--text);outline:0}
-  .btn{background:linear-gradient(180deg,var(--brand),#5c35ff);border:0;color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600}
-  .btn.secondary{background:var(--chip);border:1px solid var(--border)}
-  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--sub);font-weight:500}
-  .range{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 8px;color:var(--sub)}
-  .content{padding:20px;display:grid;gap:14px}
-  .grid{display:grid;gap:14px}
-  .g4{grid-template-columns:repeat(4,minmax(0,1fr))} .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .card{background:linear-gradient(180deg,rgba(124,77,255,.06),transparent 30%),var(--panel);
-        border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-  .card h3{margin:0 0 8px;font-size:14px;color:var(--sub);letter-spacing:.3px}
-  .kpi{display:flex;align-items:flex-end;justify-content:space-between}
-  .kpi .value{font-size:28px;font-weight:800}
-  .delta{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--sub)}
-  .delta.good{color:var(--good)} .delta.bad{color:var(--bad)}
-  table{width:100%;border-collapse:separate;border-spacing:0}
-  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--border);white-space:nowrap}
-  th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--sub);position:sticky;top:0;background:var(--panel)}
-  tr:hover td{background:rgba(124,77,255,.06)}
-  .chips{display:flex;gap:6px;flex-wrap:wrap} .chip{background:var(--chip);border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:var(--sub);font-size:12px}
-  .pill{padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:var(--chip);font-size:11px;color:var(--sub)}
-  .severity-high{background:#ef4444;color:#fff;border:0}
-  .severity-med{background:#f59e0b;color:#111;border:0}
-  .severity-low{background:#22c55e;color:#07130c;border:0}
-  .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .section-title{font-size:18px;margin:0 0 6px}
-  .hidden{display:none !important}
-  /* Responsive */
-  @media (max-width:1100px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .app{grid-template-columns:92px 1fr} .nav .txt{display:none} .brand small{display:none}}
-  @media (max-width:720px){ .g3,.g4{grid-template-columns:1fr} .app{grid-template-columns:1fr} .sidebar{position:static;height:auto}}
-  /* Section switcher (works even without JS) */
-  section.view{display:none} section.view.active{display:block}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big2Detailing | Raleigh & Durham's Premier Mobile Car Care</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.12.16/dist/framer-motion.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0062ff;
+            --primary-dark: #0046b8;
+            --accent: #00f2ff;
+            --bg: #050505;
+            --card-bg: #0f0f0f;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Animations & Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-button {
+            position: relative;
+            transition: 0.4s;
+            overflow: hidden;
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 0 30px rgba(0, 98, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Section Spacing */
+        section { padding: 120px 20px; }
+
+        /* Image Masking */
+        .img-reveal {
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* Before/After Slider Mockup */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .service-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .service-card:hover {
+            background: rgba(0, 98, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Hero Text Stroke */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            color: transparent;
+        }
+
+        .triangle-area-tag {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo">AD</div>
-      <div>
-        <h1>Aurelo Data</h1>
-        <small>Grocery OS — Store #204 · Raleigh, NC</small>
-      </div>
-    </div>
-    <nav class="nav" id="nav">
-      <a href="#overview" data-route="overview" class="active"><span>📊</span> <span class="txt">Overview</span></a>
-      <a href="#prices" data-route="prices"><span>🏷️</span> <span class="txt">Prices</span> <span class="tag" id="priceBadge">—</span></a>
-      <a href="#inventory" data-route="inventory"><span>📦</span> <span class="txt">Inventory</span></a>
-      <a href="#suppliers" data-route="suppliers"><span>🤝</span> <span class="txt">Suppliers</span></a>
-      <a href="#customers" data-route="customers"><span>🧑‍🤝‍🧑</span> <span class="txt">Customers</span></a>
-      <a href="#promotions" data-route="promotions"><span>🎯</span> <span class="txt">Promotions</span></a>
-      <a href="#forecast" data-route="forecast"><span>📈</span> <span class="txt">Forecast</span></a>
-      <a href="#alerts" data-route="alerts"><span>🚨</span> <span class="txt">Alerts & Tasks</span> <span class="tag" id="alertBadge">—</span></a>
-      <a href="#settings" data-route="settings"><span>⚙️</span> <span class="txt">Settings</span></a>
+
+    <nav class="fixed top-0 w-full z-[100] px-6 py-4 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto glass rounded-2xl px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center bg-blue-600">
+                    <span class="font-bold text-xl">B2</span>
+                </div>
+                <span class="text-xl font-black tracking-tighter uppercase">Big2<span class="text-blue-500">Detailing</span></span>
+            </div>
+            
+            <div class="hidden lg:flex gap-10 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <a href="#home" class="hover:text-white transition">Home</a>
+                <a href="#vision" class="hover:text-white transition">The Vision</a>
+                <a href="#services" class="hover:text-white transition">Services</a>
+                <a href="#process" class="hover:text-white transition">The Process</a>
+                <a href="#faq" class="hover:text-white transition">FAQ</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="tel:9190000000" class="hidden md:block text-sm font-bold">(919) 555-0123</a>
+                <a href="#contact" class="bg-blue-600 px-6 py-2.5 rounded-xl font-bold text-sm glow-button">BOOK NOW</a>
+            </div>
+        </div>
     </nav>
-    <div class="chips" style="margin-top:12px">
-      <span class="chip">Realtime POS</span>
-      <span class="chip">Pricing Engine</span>
-      <span class="chip">Juniper Forecast v2</span>
-    </div>
-  </aside>
 
-  <!-- MAIN -->
-  <main class="main">
-    <header class="topbar">
-      <div class="search">
-        <span>🔎</span>
-        <input id="searchInput" placeholder="Search products, SKUs, suppliers, customers…" />
-      </div>
-      <div class="range">
-        <span>📅</span>
-        <select id="rangeSelect">
-          <option value="7">Last 7 days</option>
-          <option value="14">Last 14 days</option>
-          <option value="30" selected>Last 30 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
-      </div>
-      <button class="btn secondary" id="exportBtn">Export CSV</button>
-      <button class="btn ghost" id="themeBtn">🌗 Theme</button>
-    </header>
-
-    <section class="content">
-      <!-- OVERVIEW (Dashboard) -->
-      <section id="overview" class="view active">
-        <div class="toolbar">
-          <div>
-            <h2 class="section-title">📊 Store Overview</h2>
-            <div class="chips">
-              <span class="chip">POS: Online</span>
-              <span class="chip">Inventory: Synced</span>
-              <span class="chip">Pricing: Ready</span>
+    <section id="home" class="relative min-h-screen flex items-center pt-32 overflow-hidden grid-bg">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[0%] right-[0%] w-[30%] h-[30%] bg-cyan-500/10 blur-[120px] rounded-full"></div>
+        
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 relative z-10">
+            <div>
+                <div class="inline-flex items-center gap-2 mb-6">
+                    <span class="triangle-area-tag uppercase">Triangle Area, NC</span>
+                    <span class="text-xs text-gray-500 font-bold uppercase tracking-widest">Mobile Premium Service</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black leading-[0.9] mb-8">
+                    WE DON'T JUST CLEAN.<br>
+                    <span class="text-gradient">WE RESTORE.</span>
+                </h1>
+                <p class="text-gray-400 text-lg md:text-xl max-w-xl mb-10 font-light leading-relaxed">
+                    Big2Detailing brings professional-grade automotive restoration directly to your location. Founded in the heart of North Carolina, we combine artisan techniques with modern efficiency.
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex items-center gap-4 p-4 glass rounded-2xl">
+                        <div class="text-blue-500 text-3xl font-bold">4.9/5</div>
+                        <div class="text-[10px] uppercase tracking-tighter text-gray-500 font-bold">Customer<br>Satisfaction</div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 glass rounded-2xl">
+                        <div class="text-blue-500 text-3xl font-bold">100%</div>
+                        <div class="text-[10px] uppercase tracking-tighter text-gray-500 font-bold">Mobile<br>Equipped</div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="chips">
-            <span class="chip">Store #204</span>
-            <span class="chip" id="today"></span>
-          </div>
-        </div>
 
-        <div class="grid g4">
-          <div class="card"><h3>Revenue (MTD)</h3><div class="kpi"><div class="value" id="revKpi">$238,420.88</div><div class="delta good">+6.4% vs prev</div></div></div>
-          <div class="card"><h3>Units Sold</h3><div class="kpi"><div class="value" id="unitsKpi">58,412</div><div class="delta">+1.9%</div></div></div>
-          <div class="card"><h3>Avg Basket</h3><div class="kpi"><div class="value" id="abKpi">$47.20</div><div class="delta good">+2.3%</div></div></div>
-          <div class="card"><h3>Gross Margin</h3><div class="kpi"><div class="value" id="gmKpi">29.8%</div><div class="delta good">+0.6pp</div></div></div>
-        </div>
-
-        <div class="grid g3">
-          <div class="card">
-            <h3>Sales by Department (Last 30d)</h3>
-            <table>
-              <thead><tr><th>Department</th><th>Revenue</th><th>Units</th><th>Share</th></tr></thead>
-              <tbody id="deptTable">
-                <tr><td>Produce</td><td>$38,920</td><td>9,812</td><td>16.3%</td></tr>
-                <tr><td>Dairy</td><td>$31,440</td><td>7,102</td><td>13.2%</td></tr>
-                <tr><td>Bakery</td><td>$21,980</td><td>3,640</td><td>9.2%</td></tr>
-                <tr><td>Meat</td><td>$44,310</td><td>5,145</td><td>18.6%</td></tr>
-                <tr><td>Pantry</td><td>$29,115</td><td>8,114</td><td>12.2%</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card">
-            <h3>Top 10 SKUs by Revenue</h3>
-            <table>
-              <thead><tr><th>SKU</th><th>Product</th><th>Dept</th><th>Revenue</th><th>Margin%</th></tr></thead>
-              <tbody id="topSkuTable">
-                <tr><td>SKU-100021</td><td>Salmon Fillet</td><td>Seafood</td><td>$7,420</td><td>28%</td></tr>
-                <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>$6,780</td><td>22%</td></tr>
-                <tr><td>SKU-100003</td><td>Gala Apples</td><td>Produce</td><td>$6,310</td><td>31%</td></tr>
-                <tr><td>SKU-100089</td><td>Olive Oil</td><td>Pantry</td><td>$5,990</td><td>33%</td></tr>
-                <tr><td>SKU-100117</td><td>Ground Beef</td><td>Meat</td><td>$5,800</td><td>26%</td></tr>
-                <tr><td>SKU-100064</td><td>Cold Brew</td><td>Beverages</td><td>$5,610</td><td>37%</td></tr>
-                <tr><td>SKU-100133</td><td>Paper Towels</td><td>Household</td><td>$5,420</td><td>24%</td></tr>
-                <tr><td>SKU-100071</td><td>Ice Cream</td><td>Frozen</td><td>$5,210</td><td>34%</td></tr>
-                <tr><td>SKU-100052</td><td>Chicken Breast</td><td>Meat</td><td>$5,040</td><td>25%</td></tr>
-                <tr><td>SKU-100015</td><td>Bananas</td><td>Produce</td><td>$4,990</td><td>28%</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card">
-            <h3>Operational Highlights</h3>
-            <ul>
-              <li>🔼 Peak hour today expected 5–7pm; schedule +1 cashier.</li>
-              <li>🧊 Frozen inventory days-of-supply: <b>12.4</b> (healthy).</li>
-              <li>🥛 Whole Milk 1G priced 6–9% above competitor; see <a href="#prices">Price Recs</a>.</li>
-              <li>🍎 Produce waste trending down (-0.6pp WoW).</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Price Opportunities (Preview)</h3>
-          <table id="overviewPriceTable">
-            <thead><tr><th>SKU</th><th>Product</th><th>Current</th><th>Competitor</th><th>Recommended</th><th>Δ</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>SKU-100044</td><td>Whole Milk</td><td>$3.89</td><td>$3.59</td><td><b>$3.69</b></td><td><span class="pill severity-med">-5.1%</span></td><td><button class="btn secondary">Approve</button></td></tr>
-              <tr><td>SKU-100089</td><td>Olive Oil</td><td>$10.99</td><td>$11.49</td><td><b>$11.29</b></td><td><span class="pill severity-low">+2.7%</span></td><td><button class="btn secondary">Approve</button></td></tr>
-              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>$1.99</td><td>$1.79</td><td><b>$1.89</b></td><td><span class="pill severity-med">-5.0%</span></td><td><button class="btn secondary">Approve</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="grid g3">
-          <div class="card">
-            <h3>Open Alerts</h3>
-            <ul id="alertList">
-              <li><span class="pill severity-high">HIGH</span> Out-of-stock risk: Gala Apples &lt; 1 day of supply</li>
-              <li><span class="pill severity-med">MED</span> Price anomaly: Whole Milk 1G +9% vs comp</li>
-              <li><span class="pill severity-low">LOW</span> GreenFields on-time rate 96% ↑</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Tasks</h3>
-            <label class="chip"><input type="checkbox"> Approve 12 price recommendations</label>
-            <label class="chip"><input type="checkbox"> Send PO to Vista Produce</label>
-            <label class="chip"><input type="checkbox"> Schedule Weekend BOGO — Snacks</label>
-          </div>
-          <div class="card">
-            <h3>Quick Actions</h3>
-            <div class="chips">
-              <button class="btn secondary" onclick="location.hash='#prices'">Review Prices</button>
-              <button class="btn secondary" onclick="location.hash='#inventory'">Generate PO</button>
-              <button class="btn secondary" onclick="location.hash='#promotions'">New Promo</button>
+            <div class="relative">
+                <div class="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1552933529-e359b2477262?auto=format&fit=crop&q=80" alt="Detailing" class="w-full h-[600px] object-cover">
+                </div>
+                <div class="absolute -bottom-10 -left-10 glass p-6 rounded-3xl z-20 hidden md:block max-w-xs">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold">Rapid Response</h4>
+                    </div>
+                    <p class="text-xs text-gray-400">Serving Raleigh, Durham, and Chapel Hill with same-week availability.</p>
+                </div>
             </div>
-          </div>
         </div>
-      </section>
-
-      <!-- PRICES -->
-      <section id="prices" class="view">
-        <div class="toolbar">
-          <div>
-            <h2 class="section-title">🏷️ Price Recommendations</h2>
-            <div class="chips">
-              <span class="chip">Elasticity-aware</span><span class="chip">Competitor indexed</span><span class="chip">MAP safe</span>
-            </div>
-          </div>
-          <div class="chips">
-            <label class="chip">Dept:
-              <select id="deptFilter">
-                <option value="">All</option>
-                <option>Produce</option><option>Dairy</option><option>Bakery</option><option>Meat</option><option>Pantry</option><option>Seafood</option><option>Frozen</option><option>Beverages</option><option>Snacks</option><option>Household</option>
-              </select>
-            </label>
-            <label class="chip">Δ threshold:
-              <select id="deltaFilter">
-                <option value="0">All</option><option value="0.02">2%+</option><option value="0.05" selected>5%+</option><option value="0.08">8%+</option>
-              </select>
-            </label>
-            <button class="btn" id="approveAllBtn">Approve All</button>
-          </div>
-        </div>
-        <div class="card" style="overflow:auto;max-height:64vh">
-          <table id="priceTable">
-            <thead><tr><th>SKU</th><th>Product</th><th>Dept</th><th>Supplier</th><th>Unit Cost</th><th>Current</th><th>Competitor</th><th>Recommended</th><th>Δ</th><th>Margin%</th><th>DOS</th><th>Risk</th><th>Action</th></tr></thead>
-            <tbody>
-              <!-- Rows injected by JS; static seed rows to ensure content is visible -->
-              <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>SunDairy</td><td>$2.85</td><td>$3.89</td><td>$3.59</td><td><b>$3.69</b></td><td><span class="pill severity-med">-5.1%</span></td><td>27%</td><td>7.2</td><td><span class="pill severity-low">Normal</span></td><td><button class="btn secondary">Approve</button></td></tr>
-              <tr><td>SKU-100089</td><td>Olive Oil</td><td>Pantry</td><td>Marco Imports</td><td>$7.58</td><td>$10.99</td><td>$11.49</td><td><b>$11.29</b></td><td><span class="pill severity-low">+2.7%</span></td><td>33%</td><td>18.3</td><td><span class="pill severity-low">Normal</span></td><td><button class="btn secondary">Approve</button></td></tr>
-              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>Produce</td><td>GreenFields</td><td>$1.38</td><td>$1.99</td><td>$1.79</td><td><b>$1.89</b></td><td><span class="pill severity-med">-5.0%</span></td><td>31%</td><td>0.9</td><td><span class="pill severity-med">Low Stock</span></td><td><button class="btn secondary">Approve</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- INVENTORY -->
-      <section id="inventory" class="view">
-        <div class="toolbar">
-          <div>
-            <h2 class="section-title">📦 Inventory</h2>
-            <div class="chips"><span class="chip">Cycle Count</span><span class="chip">FIFO</span></div>
-          </div>
-          <button class="btn secondary" id="genPoBtn">Generate PO</button>
-        </div>
-        <div class="card" style="overflow:auto;max-height:64vh">
-          <table id="invTable">
-            <thead><tr><th>SKU</th><th>Name</th><th>Dept</th><th>Stock</th><th>Reorder</th><th>DOS</th><th>Waste%</th><th>Supplier</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>SKU-100003</td><td>Gala Apples (lb)</td><td>Produce</td><td>18</td><td>25</td><td>0.9</td><td>2.8%</td><td>GreenFields</td><td><button class="btn secondary">Reserve</button></td></tr>
-              <tr><td>SKU-100044</td><td>Whole Milk</td><td>Dairy</td><td>112</td><td>40</td><td>6.2</td><td>0.9%</td><td>SunDairy</td><td><button class="btn secondary">Reserve</button></td></tr>
-              <tr><td>SKU-100117</td><td>Ground Beef</td><td>Meat</td><td>54</td><td>30</td><td>3.4</td><td>1.1%</td><td>PrimeButchers</td><td><button class="btn secondary">Reserve</button></td></tr>
-              <tr><td>SKU-100064</td><td>Cold Brew</td><td>Beverages</td><td>140</td><td>35</td><td>8.9</td><td>0.2%</td><td>BlueRiver</td><td><button class="btn secondary">Reserve</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- SUPPLIERS -->
-      <section id="suppliers" class="view">
-        <div class="toolbar">
-          <div>
-            <h2 class="section-title">🤝 Supplier Performance</h2>
-            <div class="chips"><span class="chip">SLA 95%</span><span class="chip">Auto-PO</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <table id="supTable">
-            <thead><tr><th>Supplier</th><th>Items</th><th>Revenue</th><th>On-time</th><th>Fill</th><th>Lead (d)</th><th>Score</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>GreenFields</td><td>38</td><td>$62,340</td><td>96.2%</td><td>97.1%</td><td>3.1</td><td><span class="pill severity-low">92%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
-              <tr><td>SunDairy</td><td>22</td><td>$31,880</td><td>94.8%</td><td>95.4%</td><td>2.9</td><td><span class="pill">88%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
-              <tr><td>PrimeButchers</td><td>19</td><td>$28,410</td><td>93.3%</td><td>96.8%</td><td>4.0</td><td><span class="pill">86%</span></td><td><button class="btn secondary">Open Contract</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- CUSTOMERS -->
-      <section id="customers" class="view">
-        <div class="toolbar">
-          <div>
-            <h2 class="section-title">🧑‍🤝‍🧑 Customers & Cohorts</h2>
-            <div class="chips"><span class="chip">Loyalty</span><span class="chip">CLV</span><span class="chip">RFM</span></div>
-          </div>
-        </div>
-        <div class="grid g3">
-          <div class="card"><h3>Budget Families</h3><div class="kpi"><div class="value">34%</div><div class="delta">+1.2%</div></div><div class="chips"><span class="chip">Avg Basket $42.1</span><span class="chip">Freq 1.3/wk</span><span class="chip">Churn 8.5%</span></div></div>
-          <div class="card"><h3>Health Conscious</h3><div class="kpi"><div class="value">18%</div><div class="delta">-0.8%</div></div><div class="chips"><span class="chip">Avg Basket $31.9</span><span class="chip">Freq 1.1/wk</span><span class="chip">Churn 6.1%</span></div></div>
-          <div class="card"><h3>Loyalists</h3><div class="kpi"><div class="value">16%</div><div class="delta good">+0.6%</div></div><div class="chips"><span class="chip">Avg Basket $48.2</span><span class="chip">Freq 1.7/wk</span><span class="chip">Churn 3.8%</span></div></div>
-        </div>
-        <div class="card">
-          <h3>Basket Lift — Cross-sell Pairs</h3>
-          <table>
-            <thead><tr><th>Anchor</th><th>Pair</th><th>Support</th><th>Confidence</th><th>Lift</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>Chicken Breast</td><td>Olive Oil</td><td>12.4%</td><td>63.1%</td><td>1.42×</td><td><button class="btn secondary">Create Promo</button></td></tr>
-              <tr><td>Cold Brew</td><td>Chocolate Bar</td><td>8.8%</td><td>51.3%</td><td>1.25×</td><td><button class="btn secondary">Create Promo</button></td></tr>
-              <tr><td>Bananas</td><td>Greek Yogurt</td><td>10.6%</td><td>59.7%</td><td>1.36×</td><td><button class="btn secondary">Create Promo</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- PROMOTIONS -->
-      <section id="promotions" class="view">
-        <div class="toolbar">
-          <div><h2 class="section-title">🎯 Promotions</h2><div class="chips"><span class="chip">BOGO</span><span class="chip">Mix & Match</span><span class="chip">Endcap</span></div></div>
-          <button class="btn secondary" onclick="alert('New promo wizard')">New Promotion</button>
-        </div>
-        <div class="card">
-          <table>
-            <thead><tr><th>Experiment</th><th>Lift A</th><th>Lift B</th><th>Significance</th><th>Cannibalization</th><th>Decision</th></tr></thead>
-            <tbody>
-              <tr><td>#101 BOGO Snacks</td><td>+6.8%</td><td>+9.4%</td><td>95%</td><td>+1.1%</td><td><button class="btn secondary">Roll B</button></td></tr>
-              <tr><td>#102 Milk Discount</td><td>+3.1%</td><td>+2.2%</td><td>88%</td><td>+0.6%</td><td><button class="btn secondary">Roll A</button></td></tr>
-              <tr><td>#103 Produce Bundle</td><td>+5.2%</td><td>+6.0%</td><td>92%</td><td>+0.3%</td><td><button class="btn secondary">Roll B</button></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- FORECAST -->
-      <section id="forecast" class="view">
-        <div class="toolbar">
-          <div><h2 class="section-title">📈 Demand Forecast (7-day)</h2><div class="chips"><span class="chip">Holt-Winters</span><span class="chip">Holiday adj.</span><span class="chip">Weather</span></div></div>
-        </div>
-        <div class="grid g3" id="fcGrid">
-          <div class="card"><h3>Salmon Fillet <span class="pill">SKU-100021</span></h3><div class="kpi"><div class="value">132 u</div><div class="delta">+2.1%</div></div><div class="chips"><span class="chip">Reorder @ 30</span><span class="chip">Stock 54</span></div></div>
-          <div class="card"><h3>Whole Milk <span class="pill">SKU-100044</span></h3><div class="kpi"><div class="value">248 u</div><div class="delta">-1.5%</div></div><div class="chips"><span class="chip">Reorder @ 40</span><span class="chip">Stock 112</span></div></div>
-          <div class="card"><h3>Gala Apples <span class="pill">SKU-100003</span></h3><div class="kpi"><div class="value">96 u</div><div class="delta">+3.2%</div></div><div class="chips"><span class="chip">Reorder @ 25</span><span class="chip">Stock 18</span></div></div>
-        </div>
-      </section>
-
-      <!-- ALERTS -->
-      <section id="alerts" class="view">
-        <div class="toolbar">
-          <div><h2 class="section-title">🚨 Alerts & Tasks</h2><div class="chips"><span class="chip">SLA 2h</span><span class="chip">Playbooks</span></div></div>
-        </div>
-        <div class="grid g3">
-          <div class="card"><h3>Alert</h3><p><span class="pill severity-high">HIGH</span> Out-of-stock risk: Gala Apples &lt; 1 DoS</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
-          <div class="card"><h3>Alert</h3><p><span class="pill severity-med">MED</span> Price anomaly: Whole Milk 1G +9% vs comp</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
-          <div class="card"><h3>Alert</h3><p><span class="pill severity-low">LOW</span> Supplier GreenFields on-time 96% ↑</p><button class="btn secondary" onclick="ackRow(this)">Acknowledge</button></div>
-        </div>
-        <div class="card">
-          <h3>Tasks</h3>
-          <label class="chip"><input type="checkbox"> Approve 12 price recommendations</label>
-          <label class="chip"><input type="checkbox"> Send PO to Vista Produce</label>
-          <label class="chip"><input type="checkbox"> Schedule Weekend BOGO — Snacks</label>
-        </div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section id="settings" class="view">
-        <h2 class="section-title">⚙️ Settings</h2>
-        <div class="grid g3">
-          <div class="card"><h3>Brand</h3><div class="chips"><span class="chip">Aurelo Data</span><span class="chip">Microknots</span></div></div>
-          <div class="card"><h3>Integrations</h3><div class="chips"><span class="chip">POS: Clover</span><span class="chip">ERP: NetSuite</span><span class="chip">Retail Media</span></div></div>
-          <div class="card"><h3>Explainability</h3><p class="sub">Price engine uses SHAP to summarize drivers per SKU: competitor index, margin floor, elasticity, MAP.</p></div>
-        </div>
-      </section>
     </section>
-  </main>
-</div>
 
-<noscript>
-  <div style="padding:12px;background:#fff;color:#000">JavaScript is off — static data is shown. Turn it on for live search, filters, and export.</div>
-</noscript>
+    <section id="vision" class="bg-[#080808]">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-center text-sm font-bold text-blue-500 tracking-[0.3em] uppercase mb-4">The Origin</h2>
+            <h3 class="text-center text-4xl md:text-6xl font-bold mb-16">Founded on <span class="text-outline">Partnership</span></h3>
+            
+            <div class="space-y-12 text-gray-400 text-lg leading-relaxed">
+                <p>
+                    Big2Detailing is more than just a car detailing business—it is the result of ambition, friendship, hard work, and the desire to create something meaningful from the ground up. Founded by two friends with a shared vision, we operate as a mobile service serving the Triangle Area of North Carolina.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-8 py-10">
+                    <div class="p-8 glass rounded-3xl">
+                        <h4 class="text-white font-bold mb-4 text-xl italic">"The realization marked the beginning."</h4>
+                        <p class="text-sm">We noticed many in the Triangle owned nice vehicles but lacked the time. We didn't see a problem; we saw an opportunity.</p>
+                    </div>
+                    <div class="p-8 glass rounded-3xl border-l-4 border-l-blue-600">
+                        <h4 class="text-white font-bold mb-4 text-xl">The Mindset</h4>
+                        <p class="text-sm">“Big2” symbolizes our partnership and our goal: delivering big results through detailed, professional work.</p>
+                    </div>
+                </div>
 
-<script>
-/* ===== Basic, compatible JS (ES5) ===== */
-(function(){
-  var Departments = ["Produce","Dairy","Bakery","Meat","Seafood","Pantry","Frozen","Beverages","Snacks","Household","Personal Care","International"];
-  function rand(min,max){return Math.random()*(max-min)+min}
-  function choice(a){return a[Math.floor(Math.random()*a.length)]}
-  function money(n){return "$"+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
-  function pct(n){var s=n>=0?"+":"";return s+(n*100).toFixed(1)+"%"}
-  function int(n){return Number(n).toLocaleString()}
+                <p>
+                    Car detailing may seem straightforward, but behind every clean vehicle is a system of planning, execution, and continuous improvement. We have turned a practical skill into a professional service that meets real market demand while building valuable business experience.
+                </p>
+            </div>
+        </div>
+    </section>
 
-  /* Seed mock products so all pages can render and search/export works */
-  var DB = { products: [], alerts:[
-    {severity:"HIGH", text:"Out-of-stock risk: Gala Apples < 1 DoS"},
-    {severity:"MED", text:"Price anomaly: Whole Milk +9% vs comp"},
-    {severity:"LOW", text:"Supplier GreenFields on-time 96% ↑"}
-  ]};
+    <section id="services">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-5xl font-bold mb-4">Our <span class="text-blue-500">Service Tiers</span></h2>
+                    <p class="text-gray-400">Tailored packages for every vehicle type and owner need.</p>
+                </div>
+                <div class="flex gap-4">
+                    <button class="px-6 py-2 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition">Sedans</button>
+                    <button class="px-6 py-2 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition">SUVs / Trucks</button>
+                </div>
+            </div>
 
-  function genName(dep){
-    var pool = {
-      Produce:["Gala Apples","Bananas","Baby Spinach","Roma Tomatoes","Avocados"],
-      Dairy:["Whole Milk","Greek Yogurt","Cheddar","Butter","Cottage Cheese"],
-      Bakery:["Sourdough Loaf","Blueberry Muffins","Baguette","Croissant","Whole Wheat Bread"],
-      Meat:["Chicken Breast","Ground Beef","Pork Chops","Turkey Slices","Bacon"],
-      Seafood:["Salmon Fillet","Shrimp","Tilapia","Tuna Steaks","Crab Cakes"],
-      Pantry:["Jasmine Rice","Black Beans","Olive Oil","Tomato Sauce","Pasta"],
-      Frozen:["Frozen Pizza","Mixed Veggies","Ice Cream","Waffles","Chicken Nuggets"],
-      Beverages:["Orange Juice","Cola 12pk","Cold Brew","Sparkling Water","Green Tea"],
-      Snacks:["Potato Chips","Trail Mix","Chocolate Bar","Protein Bars","Pretzels"],
-      Household:["Paper Towels","Laundry Detergent","Dish Soap","Trash Bags","Toilet Paper"]
-    }[dep] || ["Item"];
-    return pool[Math.floor(Math.random()*pool.length)];
-  }
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full">
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Entry Level</span>
+                        <h3 class="text-3xl font-bold mt-2">The Refresh</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>PH-Neutral Hand Wash & Dry</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Wheels, Tires & Wheel Well Clean</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Light Interior Vacuum & Wipe</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6">$85<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-white/5 rounded-2xl font-bold hover:bg-white hover:text-black transition">SELECT TIER</a>
+                    </div>
+                </div>
 
-  function generateProducts(count){
-    var out=[], i;
-    for(i=0;i<count;i++){
-      var dep = choice(Departments);
-      var supplier = choice(["GreenFields","NorthOcean","SunDairy","PrimeButchers","SweetBake","BlueRiver","Vista Produce","Marco Imports","Chill&Freeze","Sparkle Home"]);
-      var unitCost = +(rand(0.4,18)).toFixed(2);
-      var margin = rand(0.18,0.42);
-      var price = +(unitCost/(1-margin)).toFixed(2);
-      var comp = +(price*rand(0.9,1.1)).toFixed(2);
-      var rec = +(comp*rand(0.97,1.03)).toFixed(2);
-      var sku = "SKU-"+(100000+i);
-      var stock = Math.floor(rand(0,300));
-      var salesUnits = Math.floor(rand(5,160));
-      var revenue = +(price*salesUnits).toFixed(2);
-      var dos = stock/Math.max(salesUnits/30,1/30);
-      var waste = +(dep==="Produce"||dep==="Bakery"?rand(0.005,0.08):rand(0.001,0.03));
-      out.push({sku:sku,name:genName(dep),department:dep,supplier:supplier,unitCost:unitCost,price:price,competitor:comp,recPrice:rec,margin:(price-unitCost)/price,stock:stock,reorderPoint:Math.floor(rand(12,40)),salesUnits:salesUnits,revenue:revenue,dos:dos,wasteRate:waste});
-    }
-    return out;
-  }
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full border-blue-600/50 scale-105 relative bg-blue-600/5">
+                    <div class="absolute top-6 right-8 bg-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">Most Popular</div>
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Deep Clean</span>
+                        <h3 class="text-3xl font-bold mt-2">The Signature</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300 font-bold">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Deep Interior Steam Cleaning</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Shampoo & Hot Water Extraction</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>6-Month Paint Sealant Applied</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Leather Conditioning</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6 text-blue-500">$175<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-blue-600 rounded-2xl font-bold hover:shadow-lg transition">SELECT TIER</a>
+                    </div>
+                </div>
 
-  DB.products = generateProducts(180);
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full">
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Ultimate Care</span>
+                        <h3 class="text-3xl font-bold mt-2">The Big2 Show</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>1-Step Machine Paint Correction</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Full Engine Bay Detailing</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Clay Bar Surface Treatment</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6">$350<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-white/5 rounded-2xl font-bold hover:bg-white hover:text-black transition">SELECT TIER</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Router: show section by hash (also sets active nav) */
-  function show(route){
-    var all = document.querySelectorAll("section.view");
-    for(var i=0;i<all.length;i++){ all[i].classList.remove("active"); }
-    var el = document.getElementById(route) || document.getElementById("overview");
-    el.classList.add("active");
+    <section id="process" class="bg-white text-black py-32 rounded-[60px]">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black mb-20 leading-none uppercase tracking-tighter">How We <br><span class="text-blue-600">Work.</span></h2>
+            
+            <div class="grid md:grid-cols-4 gap-12">
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">01</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Arrival</h4>
+                        <p class="text-gray-500 text-sm">We arrive on-site with our own water, power, and professional-grade supplies. No stress for you.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">02</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Assessment</h4>
+                        <p class="text-gray-500 text-sm">Every vehicle is different. We inspect paint condition and interior materials to select the safest chemicals.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">03</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Execution</h4>
+                        <p class="text-gray-500 text-sm">The "Two-Bucket" method and steam cleaning ensure zero damage and a showroom finish.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">04</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Handover</h4>
+                        <p class="text-gray-500 text-sm">A final walkthrough with you ensures every nook and cranny meets the Big2 standard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    var nav = document.querySelectorAll(".nav a");
-    for(i=0;i<nav.length;i++){ nav[i].classList.toggle("active", nav[i].getAttribute("data-route")===route); }
-  }
-  function onHash(){ var r=(location.hash||"#overview").replace("#",""); show(r); }
-  window.addEventListener("hashchange", onHash);
+    <section id="location" class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+            <div>
+                <h2 class="text-4xl font-bold mb-8 italic">The <span class="text-blue-500">Triangle's</span> Choice</h2>
+                <div class="space-y-4">
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Raleigh</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">Downtown • North Raleigh • Brier Creek</p>
+                        </div>
+                    </div>
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Durham</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">Southpoint • Duke Area • RTP</p>
+                        </div>
+                    </div>
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Chapel Hill</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">University Area • Meadowmont</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="aspect-square bg-blue-600/20 rounded-full flex items-center justify-center p-12">
+                    <div class="text-center">
+                        <i class="fas fa-car-side text-7xl text-blue-500 mb-6"></i>
+                        <h3 class="text-3xl font-black uppercase">We Bring the <br>Shop to You</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Populate dynamic counters + today */
-  function updateBadges(){
-    var priceRecs = 0, i, p;
-    for(i=0;i<DB.products.length;i++){
-      p=DB.products[i];
-      var diff=Math.abs((p.recPrice-p.price)/p.price);
-      if(diff>0.03) priceRecs++;
-    }
-    var pb=document.getElementById("priceBadge"); if(pb) pb.textContent = priceRecs+" recs";
-    var ab=document.getElementById("alertBadge"); if(ab) ab.textContent = DB.alerts.length;
-    var td=document.getElementById("today"); if(td) td.textContent = new Date().toLocaleDateString();
-  }
+    <section id="faq" class="bg-[#0a0a0a]">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-12 text-center">Frequently Asked <span class="text-blue-500">Questions</span></h2>
+            <div class="space-y-4">
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">Do you need access to my water or power?</h4>
+                    <p class="text-sm text-gray-500">While we are fully mobile, access to an exterior water spigot and a standard electrical outlet allows us to work more efficiently and keep costs lower for you!</p>
+                </div>
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">How long does a full detail take?</h4>
+                    <p class="text-sm text-gray-500">Depending on the condition of the vehicle, a Signature Detail typically takes 3-5 hours for a thorough job.</p>
+                </div>
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">What if it rains on the day of my appointment?</h4>
+                    <p class="text-sm text-gray-500">If you have a garage we can work in, we can proceed! If not, we will contact you to reschedule at your earliest convenience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Fill the price table (keeps seed rows if present) */
-  function renderPrices(){
-    var deptSel = document.getElementById("deptFilter");
-    var deltaSel = document.getElementById("deltaFilter");
-    if(!deptSel || !deltaSel) return;
+    <section id="contact" class="relative py-32 bg-blue-600 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <h2 class="text-[20rem] font-black text-white absolute -bottom-40 -left-20 leading-none">BIG2</h2>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="text-7xl font-black text-white mb-8 leading-tight">LET'S GET <br>STARTED.</h2>
+                    <p class="text-blue-100 text-xl mb-12 max-w-md">Schedule your mobile detail today and join the hundreds of satisfied car owners in the Triangle.</p>
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-phone-volume text-3xl"></i>
+                            <span class="text-2xl font-bold">(919) 555-0123</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-envelope-open text-3xl"></i>
+                            <span class="text-2xl font-bold">book@big2detailing.com</span>
+                        </div>
+                    </div>
+                </div>
 
-    var dept = deptSel.value || "";
-    var dth = parseFloat(deltaSel.value||"0");
-    var rows = [];
-    for(var i=0;i<DB.products.length;i++){
-      var p=DB.products[i];
-      var diff=(p.recPrice-p.price)/p.price;
-      if(dept && p.department!==dept) continue;
-      if(Math.abs(diff)<dth) continue;
-      var risk = p.stock<p.reorderPoint ? "Low Stock" : (p.wasteRate>0.06? "Waste" : "Normal");
-      rows.push(
-        "<tr>"+
-        "<td>"+p.sku+"</td><td>"+p.name+"</td><td>"+p.department+"</td><td>"+p.supplier+"</td>"+
-        "<td>"+money(p.unitCost)+"</td><td>"+money(p.price)+"</td><td>"+money(p.competitor)+"</td>"+
-        "<td><b>"+money(p.recPrice)+"</b></td>"+
-        "<td><span class='pill "+(diff>=0?"severity-low":"severity-med")+"'>"+(diff>=0?"+":"")+(diff*100).toFixed(1)+"%</span></td>"+
-        "<td>"+Math.round(p.margin*100)+"%</td><td>"+p.dos.toFixed(1)+"</td>"+
-        "<td><span class='pill'>"+risk+"</span></td>"+
-        "<td><button class='btn secondary' data-approve='"+p.sku+"'>Approve</button></td>"+
-        "</tr>"
-      );
-    }
-    var body = document.querySelector("#priceTable tbody");
-    if(body){
-      // Keep the 3 seed rows on top for guaranteed content, then add generated
-      var seed = body.querySelectorAll("tr");
-      var seedHTML = "";
-      for(var s=0;s<Math.min(seed.length,3);s++){ seedHTML += seed[s].outerHTML; }
-      body.innerHTML = seedHTML + rows.slice(0,150).join("");
-    }
-  }
+                <div class="bg-white p-10 rounded-[40px] text-black shadow-2xl">
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Full Name</label>
+                                <input type="text" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600" placeholder="Cameron NC">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Phone</label>
+                                <input type="tel" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600" placeholder="(919) --- ----">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Vehicle Location (City)</label>
+                            <select class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600 appearance-none">
+                                <option>Raleigh</option>
+                                <option>Durham</option>
+                                <option>Chapel Hill</option>
+                                <option>Cary / Apex</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Service Package</label>
+                            <select class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600 appearance-none">
+                                <option>The Refresh</option>
+                                <option>The Signature (Most Popular)</option>
+                                <option>The Big2 Show (Premium)</option>
+                            </select>
+                        </div>
+                        <button class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-black transition-all transform hover:scale-[1.02] shadow-xl">
+                            CONFIRM BOOKING REQUEST
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  /* Inventory table render */
-  function renderInventory(){
-    var body = document.querySelector("#invTable tbody"); if(!body) return;
-    var list = DB.products.slice().sort(function(a,b){return a.stock-b.stock}).slice(0,120);
-    var html="";
-    for(var i=0;i<list.length;i++){
-      var p=list[i];
-      html+= "<tr><td>"+p.sku+"</td><td>"+p.name+"</td><td>"+p.department+"</td>"+
-             "<td>"+int(p.stock)+"</td><td>"+int(p.reorderPoint)+"</td>"+
-             "<td>"+p.dos.toFixed(1)+"</td><td>"+(p.wasteRate*100).toFixed(1)+"%</td>"+
-             "<td>"+p.supplier+"</td>"+
-             "<td><button class='btn secondary' data-reserve='"+p.sku+"'>Reserve</button></td></tr>";
-    }
-    // keep the 4 seed rows, then append
-    var current = body.innerHTML;
-    body.innerHTML = current + html;
-  }
+    <footer class="py-20 bg-black border-t border-white/5 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div>
+                <div class="text-3xl font-black mb-4">BIG2<span class="text-blue-500">DETAILING</span></div>
+                <p class="text-gray-600 max-w-xs text-sm italic">"Building a professional service from the ground up, one vehicle at a time."</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-12">
+                <div>
+                    <h6 class="font-bold text-xs uppercase tracking-widest mb-6 text-blue-500">Connect</h6>
+                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
+                        <li class="hover:text-white transition cursor-pointer">Instagram</li>
+                        <li class="hover:text-white transition cursor-pointer">Facebook</li>
+                        <li class="hover:text-white transition cursor-pointer">LinkedIn</li>
+                    </ul>
+                </div>
+                <div>
+                    <h6 class="font-bold text-xs uppercase tracking-widest mb-6 text-blue-500">Legal</h6>
+                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
+                        <li class="hover:text-white transition cursor-pointer">Privacy</li>
+                        <li class="hover:text-white transition cursor-pointer">Terms</li>
+                        <li class="hover:text-white transition cursor-pointer">Safety</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em]">
+            <span>© 2025 Big2Detailing LLC.</span>
+            <span>Crafted for Automotive Excellence</span>
+        </div>
+    </footer>
 
-  /* Export CSV of current product set */
-  function exportCSV(){
-    var cols = ["sku","name","department","supplier","unitCost","price","competitor","recPrice","margin","stock","reorderPoint","salesUnits","revenue","dos","wasteRate"];
-    var lines = [cols.join(",")];
-    for(var i=0;i<DB.products.length;i++){
-      var r = DB.products[i], row=[];
-      for(var c=0;c<cols.length;c++){ row.push(String(r[cols[c]]).replace(/,/g,"")); }
-      lines.push(row.join(","));
-    }
-    var csv = lines.join("\n");
-    var blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url; a.download = "aurelo-grocery.csv";
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url)},1000);
-  }
+    <script>
+        // Navbar Scroll Effect
+        window.onscroll = function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.querySelector('.max-w-7xl').classList.add('bg-black/90');
+            } else {
+                nav.classList.remove('py-2');
+                nav.querySelector('.max-w-7xl').classList.remove('bg-black/90');
+            }
+        };
 
-  /* Search filter (client side) */
-  function applySearch(){
-    var q = (document.getElementById("searchInput").value||"").toLowerCase().trim();
-    function matchRow(tr){
-      var t = tr.textContent.toLowerCase();
-      var ok = true, parts=q.split(/\s+/);
-      for(var i=0;i<parts.length;i++){ if(parts[i] && t.indexOf(parts[i])===-1){ ok=false; break; } }
-      tr.style.display = ok ? "" : "none";
-    }
-    var tables = ["#priceTable","#invTable","#supTable","#overviewPriceTable","#topSkuTable","#deptTable"];
-    for(var i=0;i<tables.length;i++){
-      var body = document.querySelector(tables[i]+" tbody") || document.querySelector(tables[i]);
-      if(!body) continue;
-      var rows = body.querySelectorAll("tr");
-      for(var r=0;r<rows.length;r++){ matchRow(rows[r]); }
-    }
-  }
+        // Smooth reveal logic for sections
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
 
-  /* Theme toggle */
-  function toggleTheme(){
-    var dark = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()==="#0b0b12";
-    if(dark){
-      document.documentElement.style.setProperty('--bg','#f6f7fb');
-      document.documentElement.style.setProperty('--panel','#ffffff');
-      document.documentElement.style.setProperty('--hover','#f4f4ff');
-      document.documentElement.style.setProperty('--text','#0e0e15');
-      document.documentElement.style.setProperty('--sub','#4f4f64');
-      document.documentElement.style.setProperty('--chip','#eef0ff');
-      document.documentElement.style.setProperty('--border','#dfe3ff');
-      document.body.style.background="linear-gradient(180deg,#f8f9ff,#f2f3fb)";
-    }else{
-      // revert by reloading simplest
-      location.reload();
-    }
-  }
-
-  /* Simple actions */
-  function delegateClicks(e){
-    var t = e.target;
-    if(t && t.getAttribute("data-approve")){
-      alert("Approved new price for "+t.getAttribute("data-approve"));
-    }
-    if(t && t.getAttribute("data-reserve")){
-      alert("Reserved stock for "+t.getAttribute("data-reserve"));
-    }
-  }
-  window.ackRow = function(btn){ btn.parentNode.remove(); }
-
-  /* Wire up UI */
-  function init(){
-    // Show initial hash/section
-    onHash();
-    // Badges & date
-    updateBadges();
-    // Render dynamic tables on first load
-    renderPrices();
-    renderInventory();
-
-    // Controls
-    var dept = document.getElementById("deptFilter");
-    var dth = document.getElementById("deltaFilter");
-    if(dept) dept.addEventListener("change", renderPrices);
-    if(dth) dth.addEventListener("change", renderPrices);
-
-    var exp = document.getElementById("exportBtn");
-    if(exp) exp.addEventListener("click", exportCSV);
-
-    var theme = document.getElementById("themeBtn");
-    if(theme) theme.addEventListener("click", toggleTheme);
-
-    var search = document.getElementById("searchInput");
-    if(search){
-      var t; search.addEventListener("input", function(){ clearTimeout(t); t=setTimeout(applySearch, 150); });
-    }
-
-    var genpo = document.getElementById("genPoBtn");
-    if(genpo){ genpo.addEventListener("click", function(){ alert("PO generated for low-stock items"); }); }
-
-    var approveAll = document.getElementById("approveAllBtn");
-    if(approveAll){ approveAll.addEventListener("click", function(){ alert("Approved all visible price recommendations"); }); }
-
-    document.body.addEventListener("click", delegateClicks);
-  }
-
-  // Set overview KPI numbers based on generated data
-  function updateOverviewKpis(){
-    var revenue=0, units=0, margin=0, gmDen=0, i, p;
-    for(i=0;i<DB.products.length;i++){
-      p=DB.products[i];
-      revenue += p.revenue;
-      units += p.salesUnits;
-      margin += (p.price - p.unitCost) * p.salesUnits;
-      gmDen += p.price * p.salesUnits;
-    }
-    var revK=document.getElementById("revKpi"); if(revK) revK.textContent = money(revenue);
-    var unK=document.getElementById("unitsKpi"); if(unK) unK.textContent = int(units);
-    var abK=document.getElementById("abKpi"); if(abK) abK.textContent = money(Math.max(20, revenue/Math.max(1, Math.round(units/ (rand(0.7,1.4))))));
-    var gmK=document.getElementById("gmKpi"); if(gmK) gmK.textContent = (Math.max(0, (margin/Math.max(gmDen,1))*100)).toFixed(1)+"%";
-  }
-
-  updateOverviewKpis();
-  // Ready
-  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
-})();
-</script>
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
+    </script>
 </body>
 </html>
