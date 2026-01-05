@@ -3,478 +3,740 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big2Detailing | Triangle NC Mobile Detailing</title>
+    <title>Big2Detailing | Raleigh & Durham's Premier Mobile Car Care</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.12.16/dist/framer-motion.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@200;400;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #0062ff;
-            --bg: #050505;
+            --primary-dark: #0046b8;
             --accent: #00f2ff;
+            --bg: #050505;
+            --card-bg: #0f0f0f;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
         }
 
         body {
             background-color: var(--bg);
             color: #ffffff;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        h1, h2, h3, .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        h1, h2, h3, .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
 
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Animations & Glassmorphism */
         .glass {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .hero-img-mask {
-            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #fff 40%, var(--primary) 100%);
+            background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
+        .glow-button {
+            position: relative;
+            transition: 0.4s;
+            overflow: hidden;
         }
 
-        .scroll-reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+        .glow-button:hover {
+            box-shadow: 0 0 30px rgba(0, 98, 255, 0.4);
+            transform: translateY(-2px);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        /* Section Spacing */
+        section { padding: 120px 20px; }
 
-        .gallery-card {
+        /* Image Masking */
+        .img-reveal {
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* Before/After Slider Mockup */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .service-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .service-card:hover {
+            background: rgba(0, 98, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Hero Text Stroke */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            color: transparent;
+        }
+
+        .triangle-area-tag {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        /* Holographic Lab */
+        .holo-section {
             position: relative;
             overflow: hidden;
-            border-radius: 20px;
-            height: 400px;
+            background: radial-gradient(circle at 20% 20%, rgba(0, 98, 255, 0.15), transparent 35%), radial-gradient(circle at 80% 10%, rgba(0, 242, 255, 0.12), transparent 35%), #03040a;
         }
 
-        .gallery-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .gallery-card:hover img {
-            transform: scale(1.1);
-        }
-
-        .overlay {
+        .holo-grid::before {
+            content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.5;
+            mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .gallery-card:hover .overlay { opacity: 1; }
+        .holo-stage {
+            position: relative;
+            perspective: 1400px;
+        }
+
+        .holo-card {
+            position: relative;
+            transform-style: preserve-3d;
+            background: linear-gradient(145deg, rgba(0, 98, 255, 0.2), rgba(0, 242, 255, 0.08));
+            border: 1px solid rgba(0, 242, 255, 0.35);
+            border-radius: 32px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45), 0 0 40px rgba(0, 98, 255, 0.3);
+            padding: 32px;
+            transform: rotateY(-14deg) rotateX(10deg);
+            animation: float 8s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .holo-card::after {
+            content: '';
+            position: absolute;
+            inset: -40%;
+            background: conic-gradient(from 90deg, rgba(0, 98, 255, 0.1), rgba(0, 242, 255, 0.25), rgba(0, 98, 255, 0.1));
+            filter: blur(60px);
+            transform: translateZ(-120px);
+            opacity: 0.7;
+        }
+
+        .holo-scan {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 30%, rgba(0, 242, 255, 0.3), transparent 70%);
+            mix-blend-mode: screen;
+            animation: scan 6s linear infinite;
+        }
+
+        .holo-car svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 12px rgba(0, 242, 255, 0.4));
+        }
+
+        .holo-car path {
+            stroke: #6cf3ff;
+            stroke-width: 3;
+            fill: transparent;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1200;
+            animation: draw 4s ease-in-out infinite alternate;
+        }
+
+        .wash-jet {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border: 2px solid rgba(0, 242, 255, 0.2);
+            border-radius: 30px;
+            transform: rotateX(70deg) rotateZ(20deg) translateZ(80px);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .wash-jet:nth-child(2) { right: 15%; top: 18%; animation-delay: 0.8s; }
+        .wash-jet:nth-child(3) { left: 10%; bottom: 8%; animation-delay: 1.4s; }
+
+        .wash-jet::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border-radius: 22px;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.4), transparent 60%);
+            filter: blur(8px);
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #6cf3ff;
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: drift 5s linear infinite;
+        }
+
+        .particle:nth-child(1) { top: 10%; left: 35%; animation-delay: 0.4s; }
+        .particle:nth-child(2) { top: 40%; left: 80%; animation-delay: 1s; }
+        .particle:nth-child(3) { top: 70%; left: 20%; animation-delay: 1.6s; }
+        .particle:nth-child(4) { top: 25%; left: 55%; animation-delay: 2.2s; }
+        .particle:nth-child(5) { top: 55%; left: 10%; animation-delay: 2.8s; }
+
+        .chip {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(0, 242, 255, 0.08);
+            border: 1px solid rgba(108, 243, 255, 0.35);
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            color: #b6f7ff;
+            text-transform: uppercase;
+        }
+
+        .chip strong { color: #fff; }
+
+        @keyframes float {
+            0%, 100% { transform: rotateY(-14deg) rotateX(10deg) translateY(0); }
+            50% { transform: rotateY(-10deg) rotateX(6deg) translateY(-10px); }
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-80%); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateX(80%); opacity: 0; }
+        }
+
+        @keyframes draw {
+            0% { stroke-dashoffset: 1200; opacity: 0.6; }
+            50% { stroke-dashoffset: 200; opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 0.8; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: rotateX(70deg) rotateZ(20deg) translateZ(80px) scale(0.96); opacity: 0.6; }
+            50% { transform: rotateX(70deg) rotateZ(20deg) translateZ(80px) scale(1.05); opacity: 1; }
+        }
+
+        @keyframes drift {
+            0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0.6; }
+            50% { transform: translate3d(12px, -18px, 0) scale(1.2); opacity: 1; }
+            100% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0.6; }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-[100] p-6">
+    <nav class="fixed top-0 w-full z-[100] px-6 py-4 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto glass rounded-2xl px-8 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <span class="text-2xl font-black tracking-tighter uppercase">Big2<span class="text-blue-500 italic">Detailing</span></span>
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center bg-blue-600">
+                    <span class="font-bold text-xl">B2</span>
+                </div>
+                <span class="text-xl font-black tracking-tighter uppercase">Big2<span class="text-blue-500">Detailing</span></span>
             </div>
-            <div class="hidden md:flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+            
+            <div class="hidden lg:flex gap-10 text-xs font-bold uppercase tracking-widest text-gray-400">
                 <a href="#home" class="hover:text-white transition">Home</a>
-                <a href="#about" class="hover:text-white transition">The Story</a>
+                <a href="#vision" class="hover:text-white transition">The Vision</a>
                 <a href="#services" class="hover:text-white transition">Services</a>
-                <a href="#gallery" class="hover:text-white transition">Gallery</a>
+                <a href="#process" class="hover:text-white transition">The Process</a>
+                <a href="#faq" class="hover:text-white transition">FAQ</a>
             </div>
-            <a href="#contact" class="bg-blue-600 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">Book</a>
+
+            <div class="flex items-center gap-4">
+                <a href="tel:9190000000" class="hidden md:block text-sm font-bold">(919) 555-0123</a>
+                <a href="#contact" class="bg-blue-600 px-6 py-2.5 rounded-xl font-bold text-sm glow-button">BOOK NOW</a>
+            </div>
         </div>
     </nav>
 
-    <section id="home" class="relative pt-40 pb-20 min-h-screen flex items-center">
-        <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-600/10 blur-[150px] -z-10"></div>
-        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+    <section id="home" class="relative min-h-screen flex items-center pt-32 overflow-hidden grid-bg">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[0%] right-[0%] w-[30%] h-[30%] bg-cyan-500/10 blur-[120px] rounded-full"></div>
+        
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 relative z-10">
             <div>
-                <span class="text-blue-500 font-bold uppercase tracking-[0.3em] text-xs mb-4 block">Raleigh • Durham • Chapel Hill</span>
-                <h1 class="text-7xl md:text-8xl font-black leading-none mb-8">
-                    WE DON'T<br><span class="text-gradient">JUST CLEAN.</span><br>WE PROTECT.
+                <div class="inline-flex items-center gap-2 mb-6">
+                    <span class="triangle-area-tag uppercase">Triangle Area, NC</span>
+                    <span class="text-xs text-gray-500 font-bold uppercase tracking-widest">Mobile Premium Service</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black leading-[0.9] mb-8">
+                    WE DON'T JUST CLEAN.<br>
+                    <span class="text-gradient">WE RESTORE.</span>
                 </h1>
-                <p class="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-                    Premium mobile car detailing serving the Triangle Area of North Carolina. Founded on discipline, partnership, and a passion for automotive excellence.
+                <p class="text-gray-400 text-lg md:text-xl max-w-xl mb-10 font-light leading-relaxed">
+                    Big2Detailing brings professional-grade automotive restoration directly to your location. Founded in the heart of North Carolina, we combine artisan techniques with modern efficiency.
                 </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex items-center gap-4 p-4 glass rounded-2xl">
+                        <div class="text-blue-500 text-3xl font-bold">4.9/5</div>
+                        <div class="text-[10px] uppercase tracking-tighter text-gray-500 font-bold">Customer<br>Satisfaction</div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 glass rounded-2xl">
+                        <div class="text-blue-500 text-3xl font-bold">100%</div>
+                        <div class="text-[10px] uppercase tracking-tighter text-gray-500 font-bold">Mobile<br>Equipped</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="relative z-10 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1552933529-e359b2477262?auto=format&fit=crop&q=80" alt="Detailing" class="w-full h-[600px] object-cover">
+                </div>
+                <div class="absolute -bottom-10 -left-10 glass p-6 rounded-3xl z-20 hidden md:block max-w-xs">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold">Rapid Response</h4>
+                    </div>
+                    <p class="text-xs text-gray-400">Serving Raleigh, Durham, and Chapel Hill with same-week availability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="holo" class="holo-section py-28 relative">
+        <div class="holo-grid absolute inset-0 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+            <div class="space-y-6">
+                <p class="text-xs font-black uppercase tracking-[0.4em] text-blue-400">Holographic Wash Diagram</p>
+                <h2 class="text-5xl md:text-6xl font-black leading-tight">See the Wash <span class="text-gradient">Before It Happens.</span></h2>
+                <p class="text-gray-400 text-lg max-w-xl">A cinematic, 3D-style visualization inspired by the latest concept car reveals. Watch the jets, foam arcs, and precision sensors run through their choreography—before our team arrives at your driveway.</p>
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-300">
+                    <div class="glass p-4 rounded-2xl border border-white/5">
+                        <div class="text-blue-400 font-bold mb-1 text-xs uppercase tracking-widest">360º Coverage</div>
+                        <p class="text-gray-400">Dual-angle foam cannons and controlled rinse sweep across every panel.</p>
+                    </div>
+                    <div class="glass p-4 rounded-2xl border border-white/5">
+                        <div class="text-blue-400 font-bold mb-1 text-xs uppercase tracking-widest">Sensor Guided</div>
+                        <p class="text-gray-400">Panel-safe distance mapping mirrors our real-world detail process.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="holo-stage">
+                <div class="holo-card">
+                    <div class="wash-jet"></div>
+                    <div class="wash-jet"></div>
+                    <div class="wash-jet"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="holo-car relative z-10">
+                        <svg viewBox="0 0 520 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M45 150 L70 140 L90 110 L150 90 L240 90 L300 100 L330 120 L360 125 L420 130 L450 140 L470 155 Q480 165 470 180 L430 180 Q420 195 400 195 Q380 195 370 180 L180 180 Q170 195 150 195 Q130 195 120 180 L70 180 Q50 180 45 170 Z" />
+                            <path d="M170 180 Q175 150 205 150 Q235 150 240 180" />
+                            <path d="M365 180 Q370 150 400 150 Q430 150 435 180" />
+                            <path d="M120 150 L150 120 Q190 110 230 110 L310 115 Q345 130 370 140" />
+                            <path d="M255 125 L275 115 Q295 115 310 125" />
+                            <path d="M200 130 L230 130" />
+                            <path d="M320 135 L350 140" />
+                        </svg>
+                    </div>
+                    <div class="holo-scan"></div>
+                    <div class="chip"><strong>Sequence</strong> 04 · Foam Arc + Ionic Rinse</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="vision" class="bg-[#080808]">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-center text-sm font-bold text-blue-500 tracking-[0.3em] uppercase mb-4">The Origin</h2>
+            <h3 class="text-center text-4xl md:text-6xl font-bold mb-16">Founded on <span class="text-outline">Partnership</span></h3>
+            
+            <div class="space-y-12 text-gray-400 text-lg leading-relaxed">
+                <p>
+                    Big2Detailing is more than just a car detailing business—it is the result of ambition, friendship, hard work, and the desire to create something meaningful from the ground up. Founded by two friends with a shared vision, we operate as a mobile service serving the Triangle Area of North Carolina.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-8 py-10">
+                    <div class="p-8 glass rounded-3xl">
+                        <h4 class="text-white font-bold mb-4 text-xl italic">"The realization marked the beginning."</h4>
+                        <p class="text-sm">We noticed many in the Triangle owned nice vehicles but lacked the time. We didn't see a problem; we saw an opportunity.</p>
+                    </div>
+                    <div class="p-8 glass rounded-3xl border-l-4 border-l-blue-600">
+                        <h4 class="text-white font-bold mb-4 text-xl">The Mindset</h4>
+                        <p class="text-sm">“Big2” symbolizes our partnership and our goal: delivering big results through detailed, professional work.</p>
+                    </div>
+                </div>
+
+                <p>
+                    Car detailing may seem straightforward, but behind every clean vehicle is a system of planning, execution, and continuous improvement. We have turned a practical skill into a professional service that meets real market demand while building valuable business experience.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-5xl font-bold mb-4">Our <span class="text-blue-500">Service Tiers</span></h2>
+                    <p class="text-gray-400">Tailored packages for every vehicle type and owner need.</p>
+                </div>
                 <div class="flex gap-4">
-                    <a href="#contact" class="bg-white text-black px-8 py-4 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">Get an Estimate</a>
-                    <a href="#gallery" class="glass px-8 py-4 rounded-xl font-bold hover:bg-white/5 transition">Our Work</a>
+                    <button class="px-6 py-2 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition">Sedans</button>
+                    <button class="px-6 py-2 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition">SUVs / Trucks</button>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full">
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Entry Level</span>
+                        <h3 class="text-3xl font-bold mt-2">The Refresh</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>PH-Neutral Hand Wash & Dry</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Wheels, Tires & Wheel Well Clean</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Light Interior Vacuum & Wipe</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6">$85<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-white/5 rounded-2xl font-bold hover:bg-white hover:text-black transition">SELECT TIER</a>
+                    </div>
+                </div>
+
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full border-blue-600/50 scale-105 relative bg-blue-600/5">
+                    <div class="absolute top-6 right-8 bg-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">Most Popular</div>
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Deep Clean</span>
+                        <h3 class="text-3xl font-bold mt-2">The Signature</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300 font-bold">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Deep Interior Steam Cleaning</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Shampoo & Hot Water Extraction</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>6-Month Paint Sealant Applied</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Leather Conditioning</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6 text-blue-500">$175<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-blue-600 rounded-2xl font-bold hover:shadow-lg transition">SELECT TIER</a>
+                    </div>
+                </div>
+
+                <div class="service-card glass p-10 rounded-[40px] flex flex-col h-full">
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Ultimate Care</span>
+                        <h3 class="text-3xl font-bold mt-2">The Big2 Show</h3>
+                    </div>
+                    <ul class="space-y-4 mb-12 flex-grow">
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>1-Step Machine Paint Correction</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Full Engine Bay Detailing</span>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <i class="fas fa-circle-check text-blue-500 mt-1"></i>
+                            <span>Clay Bar Surface Treatment</span>
+                        </li>
+                    </ul>
+                    <div class="pt-8 border-t border-white/5">
+                        <p class="text-gray-500 text-xs mb-1">Starting at</p>
+                        <p class="text-4xl font-black mb-6">$350<span class="text-sm font-normal text-gray-500">/avg</span></p>
+                        <a href="#contact" class="block w-full text-center py-4 bg-white/5 rounded-2xl font-bold hover:bg-white hover:text-black transition">SELECT TIER</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="process" class="bg-white text-black py-32 rounded-[60px]">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black mb-20 leading-none uppercase tracking-tighter">How We <br><span class="text-blue-600">Work.</span></h2>
+            
+            <div class="grid md:grid-cols-4 gap-12">
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">01</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Arrival</h4>
+                        <p class="text-gray-500 text-sm">We arrive on-site with our own water, power, and professional-grade supplies. No stress for you.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">02</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Assessment</h4>
+                        <p class="text-gray-500 text-sm">Every vehicle is different. We inspect paint condition and interior materials to select the safest chemicals.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">03</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Execution</h4>
+                        <p class="text-gray-500 text-sm">The "Two-Bucket" method and steam cleaning ensure zero damage and a showroom finish.</p>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="text-8xl font-black text-gray-100 absolute -top-12 -left-4 z-0 transition-colors group-hover:text-blue-100">04</div>
+                    <div class="relative z-10">
+                        <h4 class="text-2xl font-bold mb-4">Handover</h4>
+                        <p class="text-gray-500 text-sm">A final walkthrough with you ensures every nook and cranny meets the Big2 standard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="location" class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+            <div>
+                <h2 class="text-4xl font-bold mb-8 italic">The <span class="text-blue-500">Triangle's</span> Choice</h2>
+                <div class="space-y-4">
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Raleigh</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">Downtown • North Raleigh • Brier Creek</p>
+                        </div>
+                    </div>
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Durham</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">Southpoint • Duke Area • RTP</p>
+                        </div>
+                    </div>
+                    <div class="p-6 glass rounded-2xl flex items-center gap-6">
+                        <i class="fas fa-location-dot text-blue-500 text-2xl"></i>
+                        <div>
+                            <h5 class="font-bold">Chapel Hill</h5>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">University Area • Meadowmont</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="rounded-[40px] overflow-hidden border border-white/10 shadow-2xl h-[550px] hero-img-mask">
-                    <img src="https://images.unsplash.com/photo-1614200187524-dc4b892acf16?auto=format&fit=crop&q=80&w=1200" alt="Detailing" class="w-full h-full object-cover">
-                </div>
-                <div class="absolute -bottom-6 -left-6 glass p-6 rounded-3xl hidden md:block">
-                    <p class="text-blue-500 font-bold text-2xl mb-1">100%</p>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 tracking-widest">Mobile Service</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="about" class="py-32 bg-[#080808]">
-        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-            <div class="order-2 lg:order-1 scroll-reveal">
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="https://images.unsplash.com/photo-1597328290883-50c5787b7c7e?auto=format&fit=crop&q=80&w=600" class="rounded-3xl h-64 w-full object-cover" alt="Detailing Hands">
-                    <img src="https://images.unsplash.com/photo-1552933529-e359b2477262?auto=format&fit=crop&q=80&w=600" class="rounded-3xl h-64 w-full object-cover mt-12" alt="Clean Interior">
-                </div>
-            </div>
-            <section id="process" class="py-32 bg-[#050505] relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-                <div class="scroll-reveal">
-                    <h2 class="text-blue-500 font-bold uppercase tracking-[0.3em] text-xs mb-4">Our Method</h2>
-                    <h3 class="text-5xl md:text-7xl font-black uppercase">The 6-Step <br><span class="text-gradient italic">Gold Standard.</span></h3>
-                </div>
-                <p class="text-gray-500 max-w-sm mb-4 scroll-reveal">We don't cut corners. We follow a strict protocol to ensure your paint stays swirl-free and your interior remains factory-fresh.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">01</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-soap text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">Snow Foam Soak</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">We begin with a high-pH foam bath that encapsulates dirt and lifts it from the surface without touching the paint, preventing micro-scratches.</p>
-                    </div>
-                </div>
-
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">02</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-water text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">2-Bucket Wash</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">The safest hand-wash method known to detailers. Using grit guards and dedicated wash mitts to ensure zero cross-contamination.</p>
-                    </div>
-                </div>
-
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">03</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-magic text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">Decontamination</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">Mechanical clay bar treatment and iron-X chemical removal to strip away embedded contaminants that a normal wash can't touch.</p>
-                    </div>
-                </div>
-
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">04</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-wind text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">Interior Steam</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">High-pressure 300°F steam sanitizes surfaces, kills bacteria, and extracts grime from hard-to-reach crevices without harsh chemicals.</p>
-                    </div>
-                </div>
-
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">05</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-shield-halved text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">Surface Shield</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">Application of premium Graphene sealants or Ceramic coatings that offer hydrophobic properties and UV protection for months.</p>
-                    </div>
-                </div>
-
-                <div class="group scroll-reveal">
-                    <div class="text-7xl font-black text-white/5 group-hover:text-blue-600/20 transition-colors duration-500 mb-[-40px] ml-[-10px]">06</div>
-                    <div class="glass p-8 rounded-[30px] border-white/5 group-hover:border-blue-500/30 transition-all relative z-10">
-                        <i class="fas fa-magnifying-glass text-blue-500 text-3xl mb-6"></i>
-                        <h4 class="text-2xl font-bold mb-4 uppercase">Final Inspection</h4>
-                        <p class="text-gray-500 text-sm leading-relaxed">A 30-point walkthrough with the client to ensure every detail meets the Big2 standard. We don't leave until you're blown away.</p>
+                <div class="aspect-square bg-blue-600/20 rounded-full flex items-center justify-center p-12">
+                    <div class="text-center">
+                        <i class="fas fa-car-side text-7xl text-blue-500 mb-6"></i>
+                        <h3 class="text-3xl font-black uppercase">We Bring the <br>Shop to You</h3>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-32 bg-white text-black overflow-hidden relative">
-        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-            <div class="scroll-reveal">
-                <h2 class="text-blue-600 font-bold uppercase tracking-[0.3em] text-xs mb-6">Locally Owned & Operated</h2>
-                <h3 class="text-6xl font-black mb-10 leading-[0.9] tracking-tighter uppercase">Serving the <br>NC Triangle <br><span class="text-blue-600">Daily.</span></h3>
-                <div class="grid grid-cols-2 gap-8 mb-12">
-                    <div class="border-l-2 border-blue-600 pl-6">
-                        <h5 class="font-bold text-xl uppercase">Raleigh</h5>
-                        <p class="text-gray-500 text-sm">North Hills, Brier Creek, Downtown</p>
-                    </div>
-                    <div class="border-l-2 border-blue-600 pl-6">
-                        <h5 class="font-bold text-xl uppercase">Durham</h5>
-                        <p class="text-gray-500 text-sm">Duke Forest, Southpoint, Hope Valley</p>
-                    </div>
-                    <div class="border-l-2 border-blue-600 pl-6">
-                        <h5 class="font-bold text-xl uppercase">Chapel Hill</h5>
-                        <p class="text-gray-500 text-sm">Meadowmont, Governors Club, UNC Area</p>
-                    </div>
-                    <div class="border-l-2 border-blue-600 pl-6">
-                        <h5 class="font-bold text-xl uppercase">Cary/Apex</h5>
-                        <p class="text-gray-500 text-sm">Lochmere, Preston, Downtown Apex</p>
-                    </div>
+    <section id="faq" class="bg-[#0a0a0a]">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-12 text-center">Frequently Asked <span class="text-blue-500">Questions</span></h2>
+            <div class="space-y-4">
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">Do you need access to my water or power?</h4>
+                    <p class="text-sm text-gray-500">While we are fully mobile, access to an exterior water spigot and a standard electrical outlet allows us to work more efficiently and keep costs lower for you!</p>
                 </div>
-                <p class="text-gray-600 italic">"We bring our own water and power if needed—all we need is your keys and a parking spot."</p>
-            </div>
-            <div class="relative scroll-reveal">
-                <div class="bg-gray-100 rounded-[50px] p-4 shadow-inner">
-                    <img src="https://images.unsplash.com/photo-1518306727298-4c17e1bf6942?auto=format&fit=crop&q=80&w=1000" class="rounded-[40px] shadow-2xl h-[500px] w-full object-cover" alt="Raleigh Street">
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">How long does a full detail take?</h4>
+                    <p class="text-sm text-gray-500">Depending on the condition of the vehicle, a Signature Detail typically takes 3-5 hours for a thorough job.</p>
                 </div>
-                <div class="absolute -top-10 -right-10 bg-blue-600 text-white p-10 rounded-full w-48 h-48 flex flex-col items-center justify-center text-center shadow-xl rotate-12">
-                    <span class="text-xs font-bold uppercase tracking-widest">Mobile</span>
-                    <span class="text-3xl font-black">100%</span>
-                    <span class="text-[10px] uppercase font-bold">Convenience</span>
+                <div class="glass p-6 rounded-2xl cursor-pointer hover:border-blue-500/50 transition">
+                    <h4 class="font-bold mb-2">What if it rains on the day of my appointment?</h4>
+                    <p class="text-sm text-gray-500">If you have a garage we can work in, we can proceed! If not, we will contact you to reschedule at your earliest convenience.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 border-y border-white/5">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-                <div class="scroll-reveal">
-                    <h4 class="text-5xl font-black mb-2">500+</h4>
-                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Ceramic Coatings</p>
+    <section id="contact" class="relative py-32 bg-blue-600 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <h2 class="text-[20rem] font-black text-white absolute -bottom-40 -left-20 leading-none">BIG2</h2>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="text-7xl font-black text-white mb-8 leading-tight">LET'S GET <br>STARTED.</h2>
+                    <p class="text-blue-100 text-xl mb-12 max-w-md">Schedule your mobile detail today and join the hundreds of satisfied car owners in the Triangle.</p>
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-phone-volume text-3xl"></i>
+                            <span class="text-2xl font-bold">(919) 555-0123</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-envelope-open text-3xl"></i>
+                            <span class="text-2xl font-bold">book@big2detailing.com</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="scroll-reveal" style="transition-delay: 0.1s">
-                    <h4 class="text-5xl font-black mb-2">1.2k</h4>
-                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Interior Revivals</p>
-                </div>
-                <div class="scroll-reveal" style="transition-delay: 0.2s">
-                    <h4 class="text-5xl font-black mb-2">100%</h4>
-                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Mobile Capability</p>
-                </div>
-                <div class="scroll-reveal" style="transition-delay: 0.3s">
-                    <h4 class="text-5xl font-black mb-2">4.9</h4>
-                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Star Satisfaction</p>
+
+                <div class="bg-white p-10 rounded-[40px] text-black shadow-2xl">
+                    <form class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Full Name</label>
+                                <input type="text" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600" placeholder="Cameron NC">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Phone</label>
+                                <input type="tel" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600" placeholder="(919) --- ----">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Vehicle Location (City)</label>
+                            <select class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600 appearance-none">
+                                <option>Raleigh</option>
+                                <option>Durham</option>
+                                <option>Chapel Hill</option>
+                                <option>Cary / Apex</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Service Package</label>
+                            <select class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-blue-600 appearance-none">
+                                <option>The Refresh</option>
+                                <option>The Signature (Most Popular)</option>
+                                <option>The Big2 Show (Premium)</option>
+                            </select>
+                        </div>
+                        <button class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-black transition-all transform hover:scale-[1.02] shadow-xl">
+                            CONFIRM BOOKING REQUEST
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-32 bg-[#080808]">
-        <div class="max-w-4xl mx-auto px-6">
-            <div class="text-center mb-16 scroll-reveal">
-                <h2 class="text-sm font-bold text-blue-500 tracking-[0.4em] uppercase mb-4">Common Questions</h2>
-                <h3 class="text-5xl font-black uppercase">Technical <span class="text-gradient italic">Insights.</span></h3>
+    <footer class="py-20 bg-black border-t border-white/5 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+            <div>
+                <div class="text-3xl font-black mb-4">BIG2<span class="text-blue-500">DETAILING</span></div>
+                <p class="text-gray-600 max-w-xs text-sm italic">"Building a professional service from the ground up, one vehicle at a time."</p>
             </div>
             
-            <div class="space-y-6">
-                <div class="glass p-8 rounded-3xl border-white/5 scroll-reveal">
-                    <h5 class="text-xl font-bold mb-3 flex items-center gap-4">
-                        <span class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black italic">Q</span>
-                        Why use a mobile detailer over a tunnel wash?
-                    </h5>
-                    <p class="text-gray-500 text-sm ml-12 leading-relaxed">Tunnel washes use abrasive brushes that act like sandpaper, creating "swirl marks" in your clear coat. We use touchless foam and high-grade microfiber to preserve your paint's value and shine.</p>
-                </div>
-                
-                <div class="glass p-8 rounded-3xl border-white/5 scroll-reveal">
-                    <h5 class="text-xl font-bold mb-3 flex items-center gap-4">
-                        <span class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black italic">Q</span>
-                        Do you need access to my water or power?
-                    </h5>
-                    <p class="text-gray-500 text-sm ml-12 leading-relaxed">While we can use house outlets and faucets, our mobile rigs are fully equipped with filtered water tanks and silent generators, making us the perfect choice for office buildings or apartments.</p>
-                </div>
-
-                <div class="glass p-8 rounded-3xl border-white/5 scroll-reveal">
-                    <h5 class="text-xl font-bold mb-3 flex items-center gap-4">
-                        <span class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black italic">Q</span>
-                        How long does a full Signature detail take?
-                    </h5>
-                    <p class="text-gray-500 text-sm ml-12 leading-relaxed">Condition dictates time. Generally, a Signature Detail takes 3-5 hours. We prioritize quality over speed—we don't leave until the vehicle is in showroom condition.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    ```
-
-### Key Technical Upgrades in this code:
-1.  **Process Timeline:** Explains the "Why" behind the "What"—educating the customer on pH-neutral foam and steam cleaning increases the perceived value of your premium pricing.
-2.  **Local SEO:** By listing specific Raleigh, Durham, and Chapel Hill neighborhoods, you're much more likely to show up in local Google searches.
-3.  **Visual Trust:** Added a high-contrast white section to break up the "dark mode" design, which makes the brand feel more professional and established.
-4.  **Stats Bar:** Uses large typography to build immediate social proof.
-
-**Would you like me to generate the "Interactive Pricing Engine" next, which would include a calculator for different vehicle sizes (SUV vs Sedan)?**
-            <div class="order-1 lg:order-2 scroll-reveal">
-                <h2 class="text-4xl md:text-6xl font-black mb-8">BUILT ON <span class="text-blue-600">PARTNERSHIP.</span></h2>
-                <div class="space-y-6 text-gray-400 text-lg">
-                    <p>Founded by two friends with a shared vision, Big2Detailing operates as a mobile car detailing service serving the Triangle Area of North Carolina.</p>
-                    <p>The name “Big2” symbolizes our partnership and our goal: delivering big results through detailed, professional work. We noticed residents in the Triangle value convenience—we bring the showroom to your driveway.</p>
-                </div>
-                <div class="mt-10 flex gap-10">
-                    <div>
-                        <p class="text-white font-bold text-3xl">350+</p>
-                        <p class="text-xs uppercase text-gray-500 tracking-widest">Vehicles Detailed</p>
-                    </div>
-                    <div>
-                        <p class="text-white font-bold text-3xl">5.0</p>
-                        <p class="text-xs uppercase text-gray-500 tracking-widest">Rating Avg</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-32">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-20">
-                <h2 class="text-sm font-black text-blue-500 tracking-[0.4em] uppercase mb-4">The Portfolio</h2>
-                <h3 class="text-5xl font-black">OUR RECENT WORK</h3>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?auto=format&fit=crop&q=80&w=800" alt="Corvette Stingray">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Corvette Stingray C8</h4>
-                        <p class="text-sm text-blue-400">Exterior Restoration & Wax</p>
-                    </div>
-                </div>
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1593460354583-4224ab393666?auto=format&fit=crop&q=80&w=800" alt="Interior cockpit">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Performance Cockpit</h4>
-                        <p class="text-sm text-blue-400">Deep Interior Sanitization</p>
-                    </div>
-                </div>
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800" alt="SUV Ford Explorer">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Family SUV Prep</h4>
-                        <p class="text-sm text-blue-400">Full Interior/Exterior Package</p>
-                    </div>
-                </div>
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800" alt="Coupe Detail">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Nissan 370Z Nismo</h4>
-                        <p class="text-sm text-blue-400">Gloss Enhancement & Clay Bar</p>
-                    </div>
-                </div>
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1551522435-a13afa10f103?auto=format&fit=crop&q=80&w=800" alt="Wheel Detail">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Forged Wheel Polish</h4>
-                        <p class="text-sm text-blue-400">Brake Dust & Iron Decon</p>
-                    </div>
-                </div>
-                <div class="gallery-card scroll-reveal">
-                    <img src="https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&q=80&w=800" alt="Foam Wash">
-                    <div class="overlay">
-                        <h4 class="font-bold text-xl text-white">Safe Prep Wash</h4>
-                        <p class="text-sm text-blue-400">Two-Bucket Scratch Free Method</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="services" class="py-32 bg-[#0a0a0a]">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-6xl font-black mb-16">PACKAGES & <span class="text-blue-500">PRICING.</span></h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="glass p-10 rounded-[40px] border-white/5 flex flex-col items-center">
-                    <p class="text-blue-500 font-bold tracking-widest text-xs mb-4">BASIC REFRESH</p>
-                    <h4 class="text-5xl font-bold mb-8">$85+</h4>
-                    <ul class="text-gray-500 space-y-4 mb-10 flex-grow">
-                        <li>Safe Hand Wash</li>
-                        <li>Wheel & Tire Scrub</li>
-                        <li>Interior Vacuum</li>
-                        <li>Window Polishing</li>
+            <div class="flex flex-wrap justify-center gap-12">
+                <div>
+                    <h6 class="font-bold text-xs uppercase tracking-widest mb-6 text-blue-500">Connect</h6>
+                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
+                        <li class="hover:text-white transition cursor-pointer">Instagram</li>
+                        <li class="hover:text-white transition cursor-pointer">Facebook</li>
+                        <li class="hover:text-white transition cursor-pointer">LinkedIn</li>
                     </ul>
-                    <a href="#contact" class="w-full bg-white/5 py-4 rounded-xl font-bold hover:bg-white/10 transition">Choose Package</a>
                 </div>
-                <div class="glass p-10 rounded-[40px] border-blue-600/50 bg-blue-600/5 flex flex-col items-center relative scale-105">
-                    <div class="absolute -top-4 bg-blue-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">Most Popular</div>
-                    <p class="text-blue-400 font-bold tracking-widest text-xs mb-4 uppercase">The Signature</p>
-                    <h4 class="text-5xl font-bold mb-8">$175+</h4>
-                    <ul class="text-gray-200 space-y-4 mb-10 flex-grow">
-                        <li>Everything in Basic</li>
-                        <li>Interior Steam Clean</li>
-                        <li>Leather Conditioning</li>
-                        <li>Paint Sealant Applied</li>
+                <div>
+                    <h6 class="font-bold text-xs uppercase tracking-widest mb-6 text-blue-500">Legal</h6>
+                    <ul class="space-y-3 text-sm text-gray-500 font-medium">
+                        <li class="hover:text-white transition cursor-pointer">Privacy</li>
+                        <li class="hover:text-white transition cursor-pointer">Terms</li>
+                        <li class="hover:text-white transition cursor-pointer">Safety</li>
                     </ul>
-                    <a href="#contact" class="w-full bg-blue-600 py-4 rounded-xl font-bold hover:bg-blue-700 transition">Choose Package</a>
-                </div>
-                <div class="glass p-10 rounded-[40px] border-white/5 flex flex-col items-center">
-                    <p class="text-blue-500 font-bold tracking-widest text-xs mb-4 uppercase">The Big2 Ultimate</p>
-                    <h4 class="text-5xl font-bold mb-8">$350+</h4>
-                    <ul class="text-gray-500 space-y-4 mb-10 flex-grow">
-                        <li>Everything in Signature</li>
-                        <li>Clay Bar Treatment</li>
-                        <li>Engine Bay Detail</li>
-                        <li>Premium Ceramic Coating</li>
-                    </ul>
-                    <a href="#contact" class="w-full bg-white/5 py-4 rounded-xl font-bold hover:bg-white/10 transition">Choose Package</a>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section id="contact" class="py-32 relative">
-        <div class="max-w-5xl mx-auto px-6 glass p-12 rounded-[50px] border-blue-600/20">
-            <div class="text-center mb-12">
-                <h2 class="text-5xl font-black mb-4">READY TO <span class="text-blue-600">GLOSS?</span></h2>
-                <p class="text-gray-400">Fill out the form below or text us at (919) 555-0123</p>
-            </div>
-            <form class="grid md:grid-cols-2 gap-6">
-                <input type="text" placeholder="Your Name" class="bg-white/5 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 transition">
-                <input type="text" placeholder="Phone Number" class="bg-white/5 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 transition">
-                <input type="text" placeholder="Car Make/Model" class="bg-white/5 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 transition">
-                <select class="bg-white/5 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 transition">
-                    <option class="bg-black">Select Package</option>
-                    <option class="bg-black">Basic Refresh</option>
-                    <option class="bg-black">The Signature</option>
-                    <option class="bg-black">The Big2 Ultimate</option>
-                </select>
-                <textarea placeholder="Tell us about your car's condition..." class="md:col-span-2 bg-white/5 border border-white/10 p-5 rounded-2xl h-32 outline-none focus:border-blue-500 transition"></textarea>
-                <button class="md:col-span-2 bg-blue-600 py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:shadow-[0_0_30px_rgba(0,98,255,0.3)] transition transform hover:scale-[1.01]">Request Appointment</button>
-            </form>
-        </div>
-    </section>
-
-    <footer class="py-12 border-t border-white/5 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs font-bold uppercase tracking-widest gap-6">
-            <div class="text-white text-lg font-black italic">BIG2DETAILING</div>
-            <div class="flex gap-8">
-                <a href="#" class="hover:text-blue-500 transition">Instagram</a>
-                <a href="#" class="hover:text-blue-500 transition">Facebook</a>
-            </div>
-            <div>© 2025 Triangle NC Mobile Detailing</div>
+        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em]">
+            <span>© 2025 Big2Detailing LLC.</span>
+            <span>Crafted for Automotive Excellence</span>
         </div>
     </footer>
 
     <script>
-        // Simple scroll reveal logic
+        // Navbar Scroll Effect
+        window.onscroll = function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.querySelector('.max-w-7xl').classList.add('bg-black/90');
+            } else {
+                nav.classList.remove('py-2');
+                nav.querySelector('.max-w-7xl').classList.remove('bg-black/90');
+            }
+        };
+
+        // Smooth reveal logic for sections
+        const observerOptions = { threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
                 }
             });
-        }, { threshold: 0.1 });
+        }, observerOptions);
 
-        document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el));
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
     </script>
 </body>
 </html>
